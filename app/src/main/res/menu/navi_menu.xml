@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:enabled="true"
+        android:icon="@drawable/home"
+        android:title="홈"
+        android:iconSpaceReserved="false"/>
+
+    <item
+        android:id="@+id/diary"
+        android:enabled="true"
+        android:icon="@drawable/diary"
+        android:title="다이어리"
+        android:iconSpaceReserved="false"/>
+    <item
+        android:id="@+id/analysis"
+        android:enabled="true"
+        android:icon="@drawable/calories"
+        android:title="분석"
+        android:iconSpaceReserved="false"/>
+
+</menu>

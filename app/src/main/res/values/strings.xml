@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MobileSoftwareProject</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home_tab">Here is Home tab!</string>
+    <string name="diary_tab">Here is Diary tab!</string>
+    <string name="analysis_tab">Here is Analysis tab</string>
+</resources>
