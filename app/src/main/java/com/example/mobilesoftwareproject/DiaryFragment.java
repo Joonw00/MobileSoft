@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 
 public class DiaryFragment extends Fragment {
 
-    private String[] mealList = {"식사1", "식사2", "식사3"}; // 식사 리스트를 여기에 추가
+    private String[] mealList = {"식사1", "식사2", "식사3"}; // 식사 리스트, 나중에 DB에서 가져올 예정
 
     @Nullable
     @Override

@@ -15,7 +15,9 @@
         android:id="@+id/locationEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="장소를 입력하세요" />
+        android:hint="장소를 입력하세요"
+        android:padding="8dp"
+        android:minHeight="48dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -26,7 +28,9 @@
         android:id="@+id/foodNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="음식 이름을 입력하세요" />
+        android:hint="음식 이름을 입력하세요"
+        android:padding="8dp"
+        android:minHeight="48dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -37,7 +41,9 @@
         android:id="@+id/beverageNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="음료수 이름을 입력하세요" />
+        android:hint="음료수 이름을 입력하세요"
+        android:padding="8dp"
+        android:minHeight="48dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -48,7 +54,9 @@
         android:id="@+id/impressionsEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="소감 또는 평을 입력하세요" />
+        android:hint="소감 또는 평을 입력하세요"
+        android:padding="8dp"
+        android:minHeight="48dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -59,7 +67,9 @@
         android:id="@+id/timeEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="시간을 입력하세요" />
+        android:hint="시간을 입력하세요"
+        android:padding="8dp"
+        android:minHeight="48dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,7 +80,9 @@
         android:id="@+id/costEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="비용을 입력하세요" />
+        android:hint="비용을 입력하세요"
+        android:padding="8dp"
+        android:minHeight="48dp" />
 
     <Button
         android:id="@+id/registerButton"
