@@ -8,6 +8,13 @@
         android:iconSpaceReserved="false"/>
 
     <item
+        android:id="@+id/register"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="홈"
+        android:iconSpaceReserved="false"/>
+
+    <item
         android:id="@+id/diary"
         android:enabled="true"
         android:icon="@drawable/diary"
