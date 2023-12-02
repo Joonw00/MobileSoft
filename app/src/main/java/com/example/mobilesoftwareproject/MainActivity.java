@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
             if (menuItem.getItemId() == R.id.home) {
                 selectedFragment = new HomeFragment();
+            } else if (menuItem.getItemId() == R.id.register) {
+                selectedFragment = new RegisterFragment();
             } else if (menuItem.getItemId() == R.id.diary) {
                 selectedFragment = new DiaryFragment();
             } else if (menuItem.getItemId() == R.id.analysis) {

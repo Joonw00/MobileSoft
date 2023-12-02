@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="locationEditText" type="id" />
+    <item name="foodNameEditText" type="id" />
+    <item name="beverageNameEditText" type="id" />
+    <item name="impressionsEditText" type="id" />
+    <item name="timeEditText" type="id" />
+    <item name="costEditText" type="id" />
+</resources>

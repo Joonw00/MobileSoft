@@ -1,62 +1,23 @@
 package com.example.mobilesoftwareproject;
 
+import android.database.Cursor;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.CursorAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.fragment.app.Fragment;
+
 public class HomeFragment extends Fragment {
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ListView listView;
+    private CursorAdapter cursorAdapter;
 
     public HomeFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
     }
 
     @Override
@@ -65,17 +26,60 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // 현재 날짜 가져오기
-        LocalDate currentDate = LocalDate.now();
+        // Initialize ListView and CursorAdapter
+        listView = view.findViewById(R.id.listView);
+        cursorAdapter = createCursorAdapter();
+        listView.setAdapter(cursorAdapter);
 
-        // 날짜를 원하는 형식으로 포맷팅
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDate = currentDate.format(formatter);
-
-        // 화면에 표시
-        TextView dateTextView = view.findViewById(R.id.textView);
-        dateTextView.setText(formattedDate+" 의 식사");
+        // Load data from the database
+        loadDataFromProvider();
 
         return view;
+    }
+
+    private void loadDataFromProvider() {
+        // Query the database using ContentProvider
+        Cursor cursor = getActivity().getContentResolver().query(
+                MyContentProvider.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // Update the Cursor in the CursorAdapter
+        cursorAdapter.swapCursor(cursor);
+    }
+
+    private CursorAdapter createCursorAdapter() {
+        // Define the columns to retrieve from the database
+        String[] columns = {
+                MyContentProvider.LOCATION,
+                MyContentProvider.FOOD_NAME,
+                MyContentProvider.BEVERAGE_NAME,
+                MyContentProvider.IMPRESSIONS,
+                MyContentProvider.TIME,
+                MyContentProvider.COST
+        };
+
+        // Define the XML views to bind the data to
+        int[] to = {
+                R.id.textViewLocation,
+                R.id.textViewFoodName,
+                R.id.textViewBeverageName,
+                R.id.textViewImpressions,
+                R.id.textViewTime,
+                R.id.textViewCost
+        };
+
+        // Create a new CursorAdapter
+        return new SimpleCursorAdapter(
+                getActivity(),
+                R.layout.list_item_layout,
+                null,
+                columns,
+                to,
+                0
+        );
     }
 }
