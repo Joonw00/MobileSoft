@@ -6,4 +6,5 @@
     <item name="impressionsEditText" type="id" />
     <item name="timeEditText" type="id" />
     <item name="costEditText" type="id" />
+    <item name="registerButton" type="id" />
 </resources>
