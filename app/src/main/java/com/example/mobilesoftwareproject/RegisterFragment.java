@@ -1,5 +1,8 @@
 package com.example.mobilesoftwareproject;
 
+
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,10 +43,39 @@ public class RegisterFragment extends Fragment {
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle button click event
-                // 여기에 버튼을 클릭했을 때 수행할 동작을 추가하세요.
+                saveDataToProvider();
             }
         });
         return view;
+    }
+    private void saveDataToProvider() {
+        //edittext에 입력된 값을 가져옴
+        String location = locationEditText.getText().toString();
+        String foodName = foodNameEditText.getText().toString();
+        String beverageName = beverageNameEditText.getText().toString();
+        String impressions = impressionsEditText.getText().toString();
+        String time = timeEditText.getText().toString();
+        String cost = costEditText.getText().toString();
+
+        //데이터를 저장할 contentValues 인스턴스 생성
+        ContentValues addValues = new ContentValues();
+        addValues.put(MyContentProvider.LOCATION, location);
+        addValues.put(MyContentProvider.FOOD_NAME, foodName);
+        addValues.put(MyContentProvider.BEVERAGE_NAME, beverageName);
+        addValues.put(MyContentProvider.IMPRESSIONS, impressions);
+        addValues.put(MyContentProvider.TIME, time);
+        addValues.put(MyContentProvider.COST, cost);
+
+        //contentvalues 인스턴스를 contentprovider에 삽입
+
+        getActivity().getContentResolver().insert(MyContentProvider.CONTENT_URI, addValues);
+
+
+        locationEditText.setText("");
+        foodNameEditText.setText("");
+        beverageNameEditText.setText("");
+        impressionsEditText.setText("");
+        timeEditText.setText("");
+        costEditText.setText("");
     }
 }
