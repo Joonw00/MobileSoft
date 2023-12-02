@@ -1,0 +1,45 @@
+<!-- res/layout/list_item_layout.xml -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/textViewLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"/>
+
+    <TextView
+        android:id="@+id/textViewFoodName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Food Name"/>
+
+    <TextView
+        android:id="@+id/textViewBeverageName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Beverage Name"/>
+
+    <TextView
+        android:id="@+id/textViewImpressions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Impressions"/>
+
+    <TextView
+        android:id="@+id/textViewTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time"/>
+
+    <TextView
+        android:id="@+id/textViewCost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cost"/>
+
+</LinearLayout>
