@@ -1,12 +1,14 @@
 package com.example.mobilesoftwareproject;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.net.Uri;
 
 public class MyContentProvider extends ContentProvider {
-    static final String PROVIDER_NAME = "com.example.mobilesoftwareproject.MyContentProvider";
+    static final String PROVIDER_NAME = "com.example.MyContentProvider";
     static final String URL = "content://" + PROVIDER_NAME + "/food";
     static final Uri CONTENT_URI = Uri.parse(URL);
 
@@ -39,7 +41,12 @@ public class MyContentProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         long rowID = foodDBManager.insert(values);
-        return null;
+        if(rowID > 0) {
+            Uri uri1 = ContentUris.withAppendedId(CONTENT_URI, rowID);
+            getContext().getContentResolver().notifyChange(uri1, null);
+            return uri1;
+        }
+        throw new SQLException("Failed to add a record into " + uri);
     }
 
     @Override
