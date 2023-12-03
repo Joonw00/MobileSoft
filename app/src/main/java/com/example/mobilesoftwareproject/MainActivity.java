@@ -1,32 +1,51 @@
 package com.example.mobilesoftwareproject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     final String TAG = this.getClass().getSimpleName();
 
     LinearLayout home_ly;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
     BottomNavigationView bottomNavigationView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        init(); //객체 정의
-        SettingListener(); //리스너 등록
+        init(); // 객체 정의
+        SettingListener(); // 리스너 등록
 
-        //맨 처음 시작할 탭 설정
+
+
+        // 맨 처음 시작할 탭 설정
         bottomNavigationView.setSelectedItemId(R.id.home);
     }
 
@@ -36,11 +55,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SettingListener() {
-        //선택 리스너 등록
+        // 선택 리스너 등록
         bottomNavigationView.setOnNavigationItemSelectedListener(new TabSelectedListener());
     }
 
-    class TabSelectedListener implements BottomNavigationView.OnNavigationItemSelectedListener{
+
+
+    class TabSelectedListener implements BottomNavigationView.OnNavigationItemSelectedListener {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             Fragment selectedFragment = null;
@@ -65,5 +86,4 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     }
-
 }

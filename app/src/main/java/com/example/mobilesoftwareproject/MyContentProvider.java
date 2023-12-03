@@ -11,11 +11,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.util.Log;
 
 public class MyContentProvider extends ContentProvider {
 
     // Authority는 ContentProvider를 식별하는 데 사용됩니다.
-    public static final String AUTHORITY = "com.example.mobilesoftwareproject";
+    public static final String AUTHORITY = "com.example.MyContentProvider";
 
     // URI를 사용하여 ContentProvider에 대한 접근을 식별합니다.
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/data");
@@ -27,7 +28,7 @@ public class MyContentProvider extends ContentProvider {
     // 데이터베이스와 관련된 상수 정의
     private static final String DATABASE_NAME = "mydatabase";
     private static final String DATABASE_TABLE = "mytable";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     // 데이터베이스 테이블의 열 이름 정의
     public static final String LOCATION = "location";
@@ -36,6 +37,7 @@ public class MyContentProvider extends ContentProvider {
     public static final String IMPRESSIONS = "impressions";
     public static final String TIME = "time";
     public static final String COST = "cost";
+    public static final String PHOTO = "photo";
 
     // SQL 문 정의
     private static final String DATABASE_CREATE =
@@ -46,7 +48,8 @@ public class MyContentProvider extends ContentProvider {
                     BEVERAGE_NAME + " TEXT, " +
                     IMPRESSIONS + " TEXT, " +
                     TIME + " TEXT, " +
-                    COST + " TEXT);";
+                    COST + " TEXT," +
+                    PHOTO + "BLOB);";
 
     // UriMatcher를 사용하여 URI를 기반으로 ContentProvider에 대한 작업 식별
     private static final UriMatcher sUriMatcher;
@@ -73,8 +76,9 @@ public class MyContentProvider extends ContentProvider {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            // 업그레이드 로직이 필요한 경우 여기에 추가
+
         }
+
     }
 
     private DatabaseHelper dbHelper;
