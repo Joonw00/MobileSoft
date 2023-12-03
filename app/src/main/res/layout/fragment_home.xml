@@ -1,18 +1,41 @@
 <!-- res/layout/fragment_home.xml -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ListView
         android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="380dp"
+        android:layout_height="663dp"
         android:divider="@android:color/darker_gray"
-        android:dividerHeight="0.5dp"/>
+        android:dividerHeight="0.5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hometitle" />
+
+    <TextView
+        android:id="@+id/hometitle"
+        android:layout_width="312dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/home_title"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.473"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Include the layout for each item in the ListView (list_item_layout.xml) -->
     <!-- Adjust the layout accordingly based on your requirements -->
     <!-- Make sure to include TextViews for each column in your Cursor -->
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

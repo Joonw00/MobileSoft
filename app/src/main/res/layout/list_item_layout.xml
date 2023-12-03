@@ -3,43 +3,55 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/textViewLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location"/>
+    <ImageView
+        android:id="@+id/imageViewFood"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/camera" />
 
-    <TextView
-        android:id="@+id/textViewFoodName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Food Name"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewBeverageName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Beverage Name"/>
+        <TextView
+            android:id="@+id/textViewFoodName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Food Name" />
 
-    <TextView
-        android:id="@+id/textViewImpressions"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Impressions"/>
+        <TextView
+            android:id="@+id/textViewBeverageName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Beverage Name" />
 
-    <TextView
-        android:id="@+id/textViewTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time"/>
+        <TextView
+            android:id="@+id/textViewImpressions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Impressions" />
 
-    <TextView
-        android:id="@+id/textViewCost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cost"/>
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Time" />
+
+        <TextView
+            android:id="@+id/textViewCost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cost" />
+
+        <TextView
+            android:id="@+id/textViewLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location" />
+    </LinearLayout>
 
 </LinearLayout>

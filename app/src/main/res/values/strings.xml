@@ -5,4 +5,5 @@
     <string name="home_tab">Here is Home tab!</string>
     <string name="diary_tab">Here is Diary tab!</string>
     <string name="analysis_tab">Here is Analysis tab</string>
+    <string name="home_title">오늘의 식사</string>
 </resources>
