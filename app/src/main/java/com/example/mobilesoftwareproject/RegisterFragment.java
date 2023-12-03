@@ -64,27 +64,38 @@ public class RegisterFragment extends Fragment {
         });
         return view;
     }
-    public void onRegisterButtonClicked(){
-        String location = locationEditText.getText().toString();
-        String foodName = foodNameEditText.getText().toString();
-        String beverageName = beverageNameEditText.getText().toString();
-        String impressions = impressionsEditText.getText().toString();
-        String time = timeEditText.getText().toString();
-        String cost = costEditText.getText().toString();
-        //FoodBDManager에서 insert 메소드를 호출하여 데이터를 추가한다.
+    public void onRegisterButtonClicked() {
+        try {
+            String location = locationEditText.getText().toString();
+            String foodName = foodNameEditText.getText().toString();
+            String beverageName = beverageNameEditText.getText().toString();
+            String impressions = impressionsEditText.getText().toString();
+            String time = timeEditText.getText().toString();
+            String cost = costEditText.getText().toString();
+            //FoodBDManager에서 insert 메소드를 호출하여 데이터를 추가한다.
 
-        ContentValues addValues = new ContentValues();
-        addValues.put(MyContentProvider.LOCATION, ((EditText) getView().findViewById(R.id.locationEditText)).getText().toString());
-        addValues.put(MyContentProvider.FOOD_NAME, ((EditText) getView().findViewById(R.id.foodNameEditText)).getText().toString());
-        addValues.put(MyContentProvider.BEVERAGE_NAME, ((EditText) getView().findViewById(R.id.beverageNameEditText)).getText().toString());
-        addValues.put(MyContentProvider.IMPRESSIONS, ((EditText) getView().findViewById(R.id.impressionsEditText)).getText().toString());
-        addValues.put(MyContentProvider.TIME, ((EditText) getView().findViewById(R.id.timeEditText)).getText().toString());
-        addValues.put(MyContentProvider.COST, ((EditText) getView().findViewById(R.id.costEditText)).getText().toString());
+            ContentValues addValues = new ContentValues();
+            View fragmentView = getView();
+            if (fragmentView != null) {
+                addValues.put(MyContentProvider.LOCATION, ((EditText) fragmentView.findViewById(R.id.locationEditText)).getText().toString());
+                addValues.put(MyContentProvider.FOOD_NAME, ((EditText) fragmentView.findViewById(R.id.foodNameEditText)).getText().toString());
+                addValues.put(MyContentProvider.BEVERAGE_NAME, ((EditText) getView().findViewById(R.id.beverageNameEditText)).getText().toString());
+                addValues.put(MyContentProvider.IMPRESSIONS, ((EditText) getView().findViewById(R.id.impressionsEditText)).getText().toString());
+                addValues.put(MyContentProvider.TIME, ((EditText) getView().findViewById(R.id.timeEditText)).getText().toString());
+                addValues.put(MyContentProvider.COST, ((EditText) getView().findViewById(R.id.costEditText)).getText().toString());
+            } else {
+                Log.d("RegisterFragment", "fragmentView is null");
+                return;
+            }
 
 
-        //database에 contentvalue 인스턴스를 삽입
-        getActivity().getContentResolver().insert(MyContentProvider.CONTENT_URI, addValues);
+            //database에 contentvalue 인스턴스를 삽입
+            getActivity().getContentResolver().insert(MyContentProvider.CONTENT_URI, addValues);
 
-        Toast.makeText(getActivity().getBaseContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity().getBaseContext(), "등록되었습니다.", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("RegisterFragment", "Error inserting data to ContentProvider", e);
+            Toast.makeText(getActivity().getBaseContext(), "등록 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
