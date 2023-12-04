@@ -49,7 +49,7 @@ public class MyContentProvider extends ContentProvider {
                     IMPRESSIONS + " TEXT, " +
                     TIME + " TEXT, " +
                     COST + " TEXT," +
-                    PHOTO + "BLOB);";
+                    PHOTO + " BLOB);";
 
     // UriMatcher를 사용하여 URI를 기반으로 ContentProvider에 대한 작업 식별
     private static final UriMatcher sUriMatcher;

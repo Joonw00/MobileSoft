@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,11 @@ public class HomeFragment extends Fragment {
 
         public CustomCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
             super(context, layout, c, from, to, flags);
+            try {
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("CustomCursorAdapter", e.getMessage());
+            }
         }
 
         @Override
@@ -143,9 +149,19 @@ public class HomeFragment extends Fragment {
                     null,
                     null
             );
+            if (cursorAdapter != null) {
+                try {
+                    cursorAdapter.swapCursor(cursor);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("CustomCursorAdapter", "Error in try-catch block: " + e.getMessage());
+                }
+            } else {
+                Log.e("CustomCursorAdapter", "Error: cursorAdapter is null in loadDataFromProvider");
+            }
 
             // Update the Cursor in the CursorAdapter
-            cursorAdapter.swapCursor(cursor);
+//            cursorAdapter.swapCursor(cursor);
         }
     }
 
