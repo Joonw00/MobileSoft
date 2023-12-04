@@ -70,7 +70,7 @@ public class RegisterFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
         locationtypeSpinner = view.findViewById(R.id.locationSpinner);
         mealTypespinner = view.findViewById(R.id.mealTypespinner);
-        String[] locationTypes = {"상록원 3층", "상록원 2층", "상록원 1층", "남산학사","그루터기","가든쿡","편의점"};
+        String[] locationTypes = {"상록원 3층", "상록원 2층", "상록원 1층", "남산학사","그루터기","가든쿡"};
         String[] mealTypes = {"아침","점심","저녁"};
         // Initialize your EditText fields
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_item, locationTypes);
