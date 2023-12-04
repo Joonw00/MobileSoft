@@ -4,6 +4,6 @@
     <item name="foodNameEditText" type="id" />
     <item name="beverageNameEditText" type="id" />
     <item name="impressionsEditText" type="id" />
-    <item name="timeEditText" type="id" />
+    <item name="dateEditText" type="id" />
     <item name="costEditText" type="id" />
 </resources>

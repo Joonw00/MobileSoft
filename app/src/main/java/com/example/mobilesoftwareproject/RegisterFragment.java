@@ -2,6 +2,8 @@ package com.example.mobilesoftwareproject;
 
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,9 +16,14 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -30,21 +37,24 @@ import com.bumptech.glide.Glide;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Calendar;
 
 public class RegisterFragment extends Fragment {
     private static final int GALLERY_REQUEST_CODE = 1;
     private static final int CAMERA_REQUEST_CODE = 2;
-    private EditText locationEditText;
     private EditText foodNameEditText;
     private EditText beverageNameEditText;
     private EditText impressionsEditText;
-    private EditText timeEditText;
+    private TextView dateEditText;
     private EditText costEditText;
     private Button registerButton;
     private Button cameraButton;
     private Button galleryButton;
     private ImageView foodImage;
     private Uri uri;
+    private Spinner locationtypeSpinner;
+    private Button datePickerButton;
+
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -56,21 +66,25 @@ public class RegisterFragment extends Fragment {
     {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_register, container, false);
-
+        locationtypeSpinner = view.findViewById(R.id.locationSpinner);
+        String[] locationTypes = {"상록원 3층", "상록원 2층", "상록원 1층", "남산학사","그루터기","가든쿡","편의점"};
         // Initialize your EditText fields
-        locationEditText = view.findViewById(R.id.locationEditText);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_item, locationTypes);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        locationtypeSpinner.setAdapter(adapter);
         foodNameEditText = view.findViewById(R.id.foodNameEditText);
         beverageNameEditText = view.findViewById(R.id.beverageNameEditText);
         impressionsEditText = view.findViewById(R.id.impressionsEditText);
-        timeEditText = view.findViewById(R.id.timeEditText);
         costEditText = view.findViewById(R.id.costEditText);
+        dateEditText = view.findViewById(R.id.dateEditText);
         foodImage = view.findViewById(R.id.foodImage);
 
 
-        // Initialize the register button
+        // Initialize the  button
         registerButton = view.findViewById(R.id.registerButton);
         cameraButton = view.findViewById(R.id.cameraButton);
         galleryButton = view.findViewById(R.id.galleryButton);
+        datePickerButton = view.findViewById(R.id.datePickerButton);
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,9 +105,45 @@ public class RegisterFragment extends Fragment {
                 startActivityResult.launch(intent);
             }
         });
+        datePickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog();
+            }
+        });
+
         return view;
 
     }
+    private void showDatePickerDialog() {
+        // 현재 날짜를 기본값으로 설정
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // DatePickerDialog를 생성하고 설정
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        // 사용자가 선택한 날짜를 처리
+                        String selectedDate = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                        // monthOfYear는 0부터 시작하므로 1을 더해줍니다.
+                        // 예: 0(Jan), 1(Feb), ..., 11(Dec)
+                        dateEditText.setText(selectedDate);
+                    }
+                },
+                year, // 초기 년도 - 현재 년도 또는 기본값으로 설정
+                month, // 초기 월 - 현재 월 또는 기본값으로 설정
+                day // 초기 일 - 현재 일 또는 기본값으로 설정
+        );
+
+        // DatePickerDialog를 표시
+        datePickerDialog.show();
+    }
+
     ActivityResultLauncher<Intent> startActivityResult = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -123,18 +173,18 @@ public class RegisterFragment extends Fragment {
 
     private void saveDataToProvider() {
         // EditText 필드에서 데이터를 가져옴
-        String location = locationEditText.getText().toString();
+        String selectedlocation = locationtypeSpinner.getSelectedItem().toString();
         String foodName = foodNameEditText.getText().toString();
         String beverageName = beverageNameEditText.getText().toString();
         String impressions = impressionsEditText.getText().toString();
-        String time = timeEditText.getText().toString();
+        String time = dateEditText.getText().toString();
         String cost = costEditText.getText().toString();
         byte[] photoBytes = imageToByteArray(foodImage);
 
 
         // 데이터를 저장할 ContentValues 인스턴스 생성
         ContentValues addValues = new ContentValues();
-        addValues.put(MyContentProvider.LOCATION, location);
+        addValues.put(MyContentProvider.LOCATION, selectedlocation);
         addValues.put(MyContentProvider.FOOD_NAME, foodName);
         addValues.put(MyContentProvider.BEVERAGE_NAME, beverageName);
         addValues.put(MyContentProvider.IMPRESSIONS, impressions);
@@ -148,11 +198,10 @@ public class RegisterFragment extends Fragment {
             Toast.makeText(getActivity().getBaseContext(), "식사 기록 추가됨", Toast.LENGTH_LONG).show();
 
             // 성공적인 삽입 후 EditText 필드 지우기 , 사진 기본이미지로 바꾸기
-            locationEditText.setText("");
             foodNameEditText.setText("");
             beverageNameEditText.setText("");
             impressionsEditText.setText("");
-            timeEditText.setText("");
+            dateEditText.setText("");
             costEditText.setText("");
             clearImageView();
 
@@ -193,27 +242,4 @@ public class RegisterFragment extends Fragment {
             foodImage.setImageBitmap(photo);
         }
     }
-
-    private String getImagePath(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String imagePath = cursor.getString(columnIndex);
-            cursor.close();
-            return imagePath;
-        }
-        return null;
-    }
-
-    private void setImageView(String imagePath) {
-        // 이미지 경로를 사용하여 Bitmap으로 변환
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-
-        // 이미지뷰에 Bitmap 설정
-        foodImage.setImageBitmap(bitmap);
-    }
-
-
 }
