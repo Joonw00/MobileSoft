@@ -53,6 +53,7 @@ public class RegisterFragment extends Fragment {
     private ImageView foodImage;
     private Uri uri;
     private Spinner locationtypeSpinner;
+    private Spinner mealTypespinner;
     private Button datePickerButton;
 
 
@@ -67,11 +68,16 @@ public class RegisterFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_register, container, false);
         locationtypeSpinner = view.findViewById(R.id.locationSpinner);
+        mealTypespinner = view.findViewById(R.id.mealTypespinner);
         String[] locationTypes = {"상록원 3층", "상록원 2층", "상록원 1층", "남산학사","그루터기","가든쿡","편의점"};
+        String[] mealTypes = {"아침","점심","저녁"};
         // Initialize your EditText fields
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_item, locationTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         locationtypeSpinner.setAdapter(adapter);
+        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_item, mealTypes);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mealTypespinner.setAdapter(adapter2);
         foodNameEditText = view.findViewById(R.id.foodNameEditText);
         beverageNameEditText = view.findViewById(R.id.beverageNameEditText);
         impressionsEditText = view.findViewById(R.id.impressionsEditText);
@@ -174,6 +180,7 @@ public class RegisterFragment extends Fragment {
     private void saveDataToProvider() {
         // EditText 필드에서 데이터를 가져옴
         String selectedlocation = locationtypeSpinner.getSelectedItem().toString();
+        String selectedType = mealTypespinner.getSelectedItem().toString();
         String foodName = foodNameEditText.getText().toString();
         String beverageName = beverageNameEditText.getText().toString();
         String impressions = impressionsEditText.getText().toString();
@@ -185,6 +192,7 @@ public class RegisterFragment extends Fragment {
         // 데이터를 저장할 ContentValues 인스턴스 생성
         ContentValues addValues = new ContentValues();
         addValues.put(MyContentProvider.LOCATION, selectedlocation);
+        addValues.put(MyContentProvider.TYPE, selectedType);
         addValues.put(MyContentProvider.FOOD_NAME, foodName);
         addValues.put(MyContentProvider.BEVERAGE_NAME, beverageName);
         addValues.put(MyContentProvider.IMPRESSIONS, impressions);

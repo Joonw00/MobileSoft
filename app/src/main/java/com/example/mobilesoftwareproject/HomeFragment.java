@@ -1,5 +1,6 @@
 package com.example.mobilesoftwareproject;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -8,7 +9,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -21,10 +24,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+
 public class HomeFragment extends Fragment {
 
     private ListView listView;
     private CursorAdapter cursorAdapter;
+    private Button titleDateButton;
+    private TextView textViewDate;
     // Define the columns to retrieve from the database
     String[] columns = {
             MyContentProvider.LOCATION,
@@ -68,13 +74,19 @@ public class HomeFragment extends Fragment {
                 0
         );
         listView.setAdapter(cursorAdapter);
+        // onCreateView 내부에서
+        titleDateButton = view.findViewById(R.id.titleDateButton);
+        titleDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialogForData();
+            }
+        });
+
 
         // 데이터베이스에서 데이터를 로드
-        loadDataFromProvider();
         // TextView에 오늘의 날짜 표시
-        TextView textViewDate = view.findViewById(R.id.hometitle);
-        String currentDate = getCurrentDate() + " 의 식단";
-        textViewDate.setText(currentDate);
+        textViewDate = view.findViewById(R.id.hometitle);
 
         return view;
     }
@@ -89,6 +101,39 @@ public class HomeFragment extends Fragment {
         // 현재 날짜를 문자열로 반환
         return dateFormat.format(currentDate);
     }
+    private void showDatePickerDialogForData() {
+        // 현재 날짜를 기본값으로 설정
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        // DatePickerDialog를 생성하고 설정
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                requireContext(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        // 사용자가 선택한 날짜를 처리
+                        String selectedDate = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                        // monthOfYear는 0부터 시작하므로 1을 더해줍니다.
+                        // 예: 0(Jan), 1(Feb), ..., 11(Dec)
+
+                        String title = selectedDate+ " 의 식단";
+                        textViewDate.setText(title);
+                        // Load data from the provider for the selected date
+                        loadDataFromProvider(selectedDate);
+                    }
+                },
+                year, // 초기 년도 - 현재 년도 또는 기본값으로 설정
+                month, // 초기 월 - 현재 월 또는 기본값으로 설정
+                day // 초기 일 - 현재 일 또는 기본값으로 설정
+        );
+
+        // DatePickerDialog를 표시
+        datePickerDialog.show();
+    }
+
 
     private class CustomCursorAdapter extends SimpleCursorAdapter {
 
@@ -134,18 +179,19 @@ public class HomeFragment extends Fragment {
 
 
 
-        private void loadDataFromProvider() {
-            // Query the database using ContentProvider
-            Cursor cursor = getActivity().getContentResolver().query(
-                    MyContentProvider.CONTENT_URI,
-                    null,
-                    null,
-                    null,
-                    null
-            );
+    private void loadDataFromProvider(String selectedDate) {
+        // Query the database using ContentProvider with the selected date condition
+        Cursor cursor = getActivity().getContentResolver().query(
+                MyContentProvider.CONTENT_URI,
+                null,
+                MyContentProvider.TIME + " LIKE ?",
+                new String[]{selectedDate + "%"},  // Use the selected date as a prefix
+                null
+        );
 
-            // Update the Cursor in the CursorAdapter
-            cursorAdapter.swapCursor(cursor);
-        }
+        // Update the Cursor in the CursorAdapter
+        cursorAdapter.swapCursor(cursor);
     }
+
+}
 

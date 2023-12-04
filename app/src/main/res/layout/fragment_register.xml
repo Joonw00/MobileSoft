@@ -11,6 +11,18 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/timetextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="식사 유형 선택" />
+
+    <Spinner
+        android:id="@+id/mealTypespinner"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:padding="8dp" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="학식 장소 선택" />
@@ -37,13 +49,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="음료수 이름 입력" />
+        android:text="음료 이름 입력" />
 
     <EditText
         android:id="@+id/beverageNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="음료수 이름을 입력하세요"
+        android:hint="음료 이름을 입력하세요"
         android:padding="8dp"
         android:minHeight="48dp" />
 
@@ -63,7 +75,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="비용 입력" />
+        android:text="음식 비용 입력" />
 
     <EditText
         android:id="@+id/costEditText"

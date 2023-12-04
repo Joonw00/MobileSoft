@@ -32,6 +32,7 @@ public class MyContentProvider extends ContentProvider {
 
     // 데이터베이스 테이블의 열 이름 정의
     public static final String LOCATION = "location";
+    public static final String TYPE = "type";
     public static final String FOOD_NAME = "food_name";
     public static final String BEVERAGE_NAME = "beverage_name";
     public static final String IMPRESSIONS = "impressions";
@@ -44,12 +45,13 @@ public class MyContentProvider extends ContentProvider {
             "CREATE TABLE " + DATABASE_TABLE + " (" +
                     "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     LOCATION + " TEXT, " +
+                    TYPE + "TEXT," +
                     FOOD_NAME + " TEXT, " +
                     BEVERAGE_NAME + " TEXT, " +
                     IMPRESSIONS + " TEXT, " +
                     TIME + " TEXT, " +
                     COST + " TEXT," +
-                    PHOTO + "BLOB);";
+                    PHOTO + " BLOB);";
 
     // UriMatcher를 사용하여 URI를 기반으로 ContentProvider에 대한 작업 식별
     private static final UriMatcher sUriMatcher;
