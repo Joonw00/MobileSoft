@@ -32,13 +32,13 @@ public class HomeFragment extends Fragment {
     private CursorAdapter cursorAdapter;
     private Button titleDateButton;
     private TextView textViewDate;
+    private StringBuilder title;
     // Define the columns to retrieve from the database
     String[] columns = {
             MyContentProvider.LOCATION,
             MyContentProvider.FOOD_NAME,
             MyContentProvider.BEVERAGE_NAME,
             MyContentProvider.IMPRESSIONS,
-            MyContentProvider.TIME,
             MyContentProvider.COST,
             MyContentProvider.PHOTO
     };
@@ -49,7 +49,6 @@ public class HomeFragment extends Fragment {
             R.id.textViewFoodName,
             R.id.textViewBeverageName,
             R.id.textViewImpressions,
-            R.id.textViewTime,
             R.id.textViewCost,
             R.id.imageViewFood
     };
@@ -88,6 +87,10 @@ public class HomeFragment extends Fragment {
         // 데이터베이스에서 데이터를 로드
         // TextView에 오늘의 날짜 표시
         textViewDate = view.findViewById(R.id.hometitle);
+        String currentDate = getCurrentDate();
+        String title = currentDate + "(오늘)의 식단";
+        textViewDate.setText(title);
+        loadDataFromProvider(currentDate);
 
         return view;
     }
@@ -97,7 +100,7 @@ public class HomeFragment extends Fragment {
         Date currentDate = calendar.getTime();
 
         // 날짜 포맷 지정
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-d", Locale.getDefault());
 
         // 현재 날짜를 문자열로 반환
         return dateFormat.format(currentDate);
@@ -117,10 +120,13 @@ public class HomeFragment extends Fragment {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         // 사용자가 선택한 날짜를 처리
                         String selectedDate = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                        title = new StringBuilder();
                         // monthOfYear는 0부터 시작하므로 1을 더해줍니다.
                         // 예: 0(Jan), 1(Feb), ..., 11(Dec)
-
-                        String title = selectedDate+ " 의 식단";
+                        if(selectedDate.equals(getCurrentDate()))
+                            title.append(selectedDate).append("(오늘)의 식단");
+                        else
+                            title.append(selectedDate).append(" 의 식단");
                         textViewDate.setText(title);
                         // Load data from the provider for the selected date
                         loadDataFromProvider(selectedDate);
@@ -154,17 +160,17 @@ public class HomeFragment extends Fragment {
             TextView textViewFoodName = view.findViewById(R.id.textViewFoodName);
             TextView textViewBeverageName = view.findViewById(R.id.textViewBeverageName);
             TextView textViewImpressions = view.findViewById(R.id.textViewImpressions);
-            TextView textViewTime = view.findViewById(R.id.textViewTime);
             TextView textViewCost = view.findViewById(R.id.textViewCost);
             ImageView imageViewFood = view.findViewById(R.id.imageViewFood);
+            String type = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
+
 
             // Extract data from the cursor
-            String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
-            String foodName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
-            String beverageName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.BEVERAGE_NAME));
-            String impressions = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.IMPRESSIONS));
-            String time = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
-            String cost = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
+            String location = "위치 :" + cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
+            String foodName = "음식 이름 : "+ cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
+            String beverageName = "음료 이름 : "+cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.BEVERAGE_NAME));
+            String impressions = "감상평 : "+cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.IMPRESSIONS));
+            String cost = "가격 : "+cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
             byte[] photoByteArray = cursor.getBlob(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
 
             // Set data to views
@@ -172,13 +178,49 @@ public class HomeFragment extends Fragment {
             textViewFoodName.setText(foodName);
             textViewBeverageName.setText(beverageName);
             textViewImpressions.setText(impressions);
-            textViewTime.setText(time);
             textViewCost.setText(cost);
 
             // Set the photo from byte array
             if (photoByteArray != null) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
                 imageViewFood.setImageBitmap(bitmap);
+            }
+            TextView calorietextView = view.findViewById(R.id.textViewCalorie);
+            if (type != null) {
+                switch (type) {
+                    case "아침":// 아침에 해당하는 칼로리로 설정
+                        if("음료 이름 : water".equals(beverageName))
+                            calorietextView.setText("총 칼로리: 300kcal");
+                        else if("음료 이름 : coffee".equals(beverageName))
+                            calorietextView.setText("총 칼로리: 350kcal");
+                        else
+                            calorietextView.setText("총 칼로리: 400kcal");
+                            break;
+                    case "점심":// 점심에 해당하는 칼로리로 설정
+                        if("음료 이름 : water".equals(beverageName))
+                            calorietextView.setText("총 칼로리: 400kcal");
+                        else if("음료 이름 : coffee".equals(beverageName))
+                            calorietextView.setText("총 칼로리: 450kcal");
+                        else
+                            calorietextView.setText("총 칼로리: 500kcal");
+                        break;
+                    case "저녁":// 저녁에 해당하는 칼로리로 설정
+                        if("음료 이름 : water".equals(beverageName))
+                            calorietextView.setText("총 칼로리: 500kcal");
+                        else if("음료 이름 : coffee".equals(beverageName))
+                            calorietextView.setText("총 칼로리: 550kcal");
+                        else
+                            calorietextView.setText("총 칼로리: 600kcal");
+                        break;
+                    default:// 그 외에는 0kcal로 설정 또는 원하는 기본값으로 설정
+                        if("음료 이름 : water".equals(beverageName))
+                            calorietextView.setText("총 칼로리: 0kcal");
+                        else if("음료 이름 : coffee".equals(beverageName))
+                            calorietextView.setText("총 칼로리: 50kcal");
+                        else
+                            calorietextView.setText("총 칼로리: 100kcal");
+                        break;
+                }
             }
         }
     }

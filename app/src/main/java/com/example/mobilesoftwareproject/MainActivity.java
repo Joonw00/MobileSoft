@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
             Fragment selectedFragment = null;
+            FragmentManager fragmentManager = getSupportFragmentManager();
 
             if (menuItem.getItemId() == R.id.home) {
                 selectedFragment = new HomeFragment();
@@ -77,9 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if (selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.home_ly, selectedFragment)
-                        .commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.home_ly, selectedFragment).commit();
                 return true;
             }
 
