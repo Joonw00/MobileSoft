@@ -17,7 +17,7 @@ import androidx.fragment.app.Fragment;
 
 public class DiaryFragment extends Fragment {
 
-    private String[] mealList = {"식사1", "식사2", "식사3"}; // 식사 리스트, 나중에 DB에서 가져올 예정
+    private String[] mealList = {"아침", "점심", "저녁"};
 
     @Nullable
     @Override
@@ -35,6 +35,9 @@ public class DiaryFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedMeal = mealList[position];
+
+                // 선택된 날짜의 선택된 끼니의 식사를 표시
+
                 selectedMealTextView.setText(selectedMeal);
                 selectedMealTextView.setVisibility(View.VISIBLE);
             }

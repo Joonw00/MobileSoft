@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,6 +217,7 @@ public class RegisterFragment extends Fragment {
         } catch (Exception e) {
             // 예외 처리 (예: 데이터베이스 오류)
             e.printStackTrace();
+            Log.e("RegisterFragment", "Error in try-catch block: " + e.getMessage());
             Toast.makeText(getActivity().getBaseContext(), "식사 기록 추가 실패", Toast.LENGTH_LONG).show();
         }
     }

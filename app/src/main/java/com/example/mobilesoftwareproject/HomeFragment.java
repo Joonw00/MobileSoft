@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -139,6 +140,11 @@ public class HomeFragment extends Fragment {
 
         public CustomCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
             super(context, layout, c, from, to, flags);
+            try {
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("CustomCursorAdapter", e.getMessage());
+            }
         }
 
         @Override
