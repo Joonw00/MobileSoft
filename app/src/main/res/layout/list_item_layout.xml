@@ -21,7 +21,7 @@
             android:id="@+id/deleteButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginLeft="143dp"
+            android:layout_marginLeft="125dp"
             android:padding="0dp"
             android:scaleType="centerCrop"
             android:src="@drawable/remove" />
@@ -31,12 +31,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Food Name" />
-
-        <TextView
-            android:id="@+id/textViewBeverageName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Beverage Name" />
 
         <TextView
             android:id="@+id/textViewImpressions"

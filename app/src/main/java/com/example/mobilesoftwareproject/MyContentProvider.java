@@ -28,18 +28,18 @@ public class MyContentProvider extends ContentProvider {
     // 데이터베이스와 관련된 상수 정의
     private static final String DATABASE_NAME = "mydatabase";
     private static final String DATABASE_TABLE = "mytable";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     // 데이터베이스 테이블의 열 이름 정의
     public static final String LOCATION = "location";
     public static final String TYPE = "type";
     public static final String FOOD_NAME = "food_name";
-    public static final String BEVERAGE_NAME = "beverage_name";
     public static final String IMPRESSIONS = "impressions";
     public static final String TIME = "time";
     public static final String COST = "cost";
     public static final String PHOTO = "photo";
     public static final String ID = "_id";
+    public static final String CALORIE ="calorie";
 
     // SQL 문 정의
     private static final String DATABASE_CREATE =
@@ -48,10 +48,10 @@ public class MyContentProvider extends ContentProvider {
                     LOCATION + " TEXT, " +
                     TYPE + " TEXT," +
                     FOOD_NAME + " TEXT, " +
-                    BEVERAGE_NAME + " TEXT, " +
+                    CALORIE + " INT, " +
                     IMPRESSIONS + " TEXT, " +
                     TIME + " TEXT, " +
-                    COST + " TEXT," +
+                    COST + " INT," +
                     PHOTO + " BLOB);";
 
     // UriMatcher를 사용하여 URI를 기반으로 ContentProvider에 대한 작업 식별
@@ -79,9 +79,20 @@ public class MyContentProvider extends ContentProvider {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            // 버전이 변경될 때마다 호출되는 메서드입니다.
+            // 여기에서는 기존 테이블을 삭제하고, 새로운 테이블을 생성하거나 업그레이드 로직을 수행합니다.
+            // 필요에 따라서는 기존 데이터의 백업 및 복원 작업도 수행할 수 있습니다.
 
+            Log.w(DatabaseHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion);
+
+            // 테이블 삭제
+            db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE);
+
+            // 새로운 테이블 생성
+            db.execSQL(DATABASE_CREATE);
+
+            // 여러 버전의 업그레이드 로직이 필요한 경우, switch 문 등을 사용하여 추가할 수 있습니다.
         }
-
     }
 
     private DatabaseHelper dbHelper;
