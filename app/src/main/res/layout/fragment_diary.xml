@@ -27,4 +27,12 @@
         android:padding="16dp"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/foodInformationTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:padding="16dp"
+        android:visibility="gone" />
+
 </LinearLayout>

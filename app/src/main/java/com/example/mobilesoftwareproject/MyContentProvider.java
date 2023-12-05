@@ -187,4 +187,10 @@ public class MyContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
     }
+    public Cursor queryDataByMealAndTime(String selectedMeal, String selectedTime, String[] projection, String sortOrder) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String selection = TYPE + "=? AND " + TIME + "=?";
+        String[] selectionArgs = new String[]{selectedMeal, selectedTime};
+        return db.query(DATABASE_TABLE, projection, selection, selectionArgs, null, null, sortOrder);
+    }
 }
