@@ -30,7 +30,10 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     final String TAG = this.getClass().getSimpleName();
-
+    private HomeFragment homeFragment;
+    private RegisterFragment registerFragment;
+    private DiaryFragment diaryFragment;
+    private AnalysisFragment analysisFragment;
     LinearLayout home_ly;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     BottomNavigationView bottomNavigationView;
@@ -43,7 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
         init(); // 객체 정의
         SettingListener(); // 리스너 등록
-
+        // 프래그먼트 초기화
+        homeFragment = new HomeFragment();
+        registerFragment = new RegisterFragment();
+        diaryFragment = new DiaryFragment();
+        analysisFragment = new AnalysisFragment();
 
 
         // 맨 처음 시작할 탭 설정
@@ -69,21 +76,53 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager fragmentManager = getSupportFragmentManager();
 
             if (menuItem.getItemId() == R.id.home) {
-                selectedFragment = new HomeFragment();
+                selectedFragment = homeFragment;
             } else if (menuItem.getItemId() == R.id.register) {
-                selectedFragment = new RegisterFragment();
+                selectedFragment = registerFragment;
             } else if (menuItem.getItemId() == R.id.diary) {
-                selectedFragment = new DiaryFragment();
+                selectedFragment = diaryFragment;
             } else if (menuItem.getItemId() == R.id.analysis) {
-                selectedFragment = new AnalysisFragment();
+                selectedFragment = analysisFragment;
             }
 
             if (selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.home_ly, selectedFragment).commit();
+                showFragment(selectedFragment);
                 return true;
             }
 
             return false;
         }
+        private void showFragment(Fragment fragment) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+            // 모든 프래그먼트 숨기기
+            hideFragments(transaction);
+
+            // 프래그먼트가 추가되지 않았으면 추가
+            if (!fragment.isAdded()) {
+                transaction.add(R.id.home_ly, fragment);
+            }
+
+            // 선택한 프래그먼트 보이기
+            transaction.show(fragment);
+            transaction.commit();
+        }
+
+        private void hideFragments(FragmentTransaction transaction) {
+            if (homeFragment != null) {
+                transaction.hide(homeFragment);
+            }
+            if (registerFragment != null) {
+                transaction.hide(registerFragment);
+            }
+            if (diaryFragment != null) {
+                transaction.hide(diaryFragment);
+            }
+            if (analysisFragment != null) {
+                transaction.hide(analysisFragment);
+            }
+        }
     }
+
 }
