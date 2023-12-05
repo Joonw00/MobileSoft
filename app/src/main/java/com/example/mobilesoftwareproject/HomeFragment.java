@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -24,13 +26,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class HomeFragment extends Fragment {
 
     private ListView listView;
     private CursorAdapter cursorAdapter;
-    private Button titleDateButton;
+    private ImageButton titleDateButton;
+    private ImageButton deleteButton;
     private TextView textViewDate;
     private StringBuilder title;
     // Define the columns to retrieve from the database
@@ -154,7 +159,8 @@ public class HomeFragment extends Fragment {
         }
 
         @Override
-        public void bindView(View view, Context context, Cursor cursor) {
+        public void bindView(View view, Context context, Cursor cursor)
+        {
             // Get references to views
             TextView textViewLocation = view.findViewById(R.id.textViewLocation);
             TextView textViewFoodName = view.findViewById(R.id.textViewFoodName);
@@ -222,8 +228,49 @@ public class HomeFragment extends Fragment {
                         break;
                 }
             }
+            deleteButton = view.findViewById(R.id.deleteButton);
+            deleteButton.setTag(cursor.getLong(cursor.getColumnIndexOrThrow(MyContentProvider.ID))); // Set the ID as the tag for later retrieval
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get the ID from the tag
+                    long id = (long) v.getTag();
+                    // Call a method to delete the item with the given ID
+                    deleteItem(id);
+                }
+            });
         }
     }
+
+    // HomeFragment 클래스에
+    private void deleteItem(long id) {
+        // ContentResolver를 사용하여 해당 ID에 해당하는 데이터를 삭제
+        int rowsDeleted = getActivity().getContentResolver().delete(
+                MyContentProvider.CONTENT_URI,
+                MyContentProvider.ID + "=?",
+                new String[]{String.valueOf(id)}
+        );
+        String extractedDate = getTextViewDateText();
+
+        // 삭제가 성공적으로 이루어졌을 경우에만 메시지를 표시
+            // 삭제가 성공적으로 이루어졌을 경우에만 메시지를 표시
+            if (rowsDeleted > 0) {
+                loadDataFromProvider(extractedDate);
+
+        }
+    }
+    private String getTextViewDateText() {
+        TextView hometitleTextView = requireView().findViewById(R.id.hometitle);
+        String title = hometitleTextView.getText().toString(); //date 외의 글자도 포함.
+        String res = "";
+        Pattern pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{1,2}");
+        Matcher matcher = pattern.matcher(title);
+        if (matcher.find()) {
+            res = matcher.group();
+        }
+        return res;
+    }
+
 
 
 

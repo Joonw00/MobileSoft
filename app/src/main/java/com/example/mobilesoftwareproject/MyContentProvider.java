@@ -39,13 +39,14 @@ public class MyContentProvider extends ContentProvider {
     public static final String TIME = "time";
     public static final String COST = "cost";
     public static final String PHOTO = "photo";
+    public static final String ID = "_id";
 
     // SQL 문 정의
     private static final String DATABASE_CREATE =
             "CREATE TABLE " + DATABASE_TABLE + " (" +
-                    "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     LOCATION + " TEXT, " +
-                    TYPE + "TEXT," +
+                    TYPE + " TEXT," +
                     FOOD_NAME + " TEXT, " +
                     BEVERAGE_NAME + " TEXT, " +
                     IMPRESSIONS + " TEXT, " +

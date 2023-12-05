@@ -9,43 +9,45 @@
 
     <ListView
         android:id="@+id/listView"
-        android:layout_width="380dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="44dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="0.5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleDateButton" />
+        app:layout_constraintTop_toBottomOf="@+id/hometitle" />
 
     <TextView
         android:id="@+id/hometitle"
-        android:layout_width="312dp"
-        android:layout_height="54dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
+        android:layout_width="239dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="49dp"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/home_title"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/listView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/titleDateButton" />
 
-    <Button
+    <ImageButton
         android:id="@+id/titleDateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
-        android:layout_marginBottom="123dp"
-        android:text="날짜 선택"
-        app:layout_constraintBottom_toTopOf="@+id/listView"
+        android:layout_width="58dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:padding="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/hometitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/calendar" />
 
     <!-- Include the layout for each item in the ListView (list_item_layout.xml) -->
     <!-- Adjust the layout accordingly based on your requirements -->
