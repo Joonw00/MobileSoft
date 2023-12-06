@@ -43,11 +43,12 @@
         android:layout_marginBottom="10dp"
         android:padding="0dp"
         android:scaleType="centerCrop"
+        app:srcCompat="@drawable/calendar"
         app:layout_constraintBottom_toTopOf="@+id/hometitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/calendar" />
+         />
 
     <!-- Include the layout for each item in the ListView (list_item_layout.xml) -->
     <!-- Adjust the layout accordingly based on your requirements -->

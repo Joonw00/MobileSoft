@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -44,7 +45,6 @@ public class RegisterFragment extends Fragment {
     private static final int GALLERY_REQUEST_CODE = 1;
     private static final int CAMERA_REQUEST_CODE = 2;
     private EditText foodNameEditText;
-    private EditText beverageNameEditText;
     private EditText impressionsEditText;
     private TextView dateEditText;
     private EditText costEditText;
@@ -55,7 +55,7 @@ public class RegisterFragment extends Fragment {
     private Uri uri;
     private Spinner locationtypeSpinner;
     private Spinner mealTypespinner;
-    private Button datePickerButton;
+    private ImageButton datePickerButton;
 
 
     public RegisterFragment() {
@@ -70,8 +70,8 @@ public class RegisterFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
         locationtypeSpinner = view.findViewById(R.id.locationSpinner);
         mealTypespinner = view.findViewById(R.id.mealTypespinner);
-        String[] locationTypes = {"상록원 3층", "상록원 2층", "상록원 1층", "남산학사","그루터기","가든쿡"};
-        String[] mealTypes = {"아침","점심","저녁"};
+        String[] locationTypes = {"상록원 3층", "상록원 2층", "상록원 1층", "남산학사","그루터기","가든쿡","편의점"};
+        String[] mealTypes = {"아침","점심","저녁","음료"};
         // Initialize your EditText fields
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_item, locationTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -80,7 +80,6 @@ public class RegisterFragment extends Fragment {
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mealTypespinner.setAdapter(adapter2);
         foodNameEditText = view.findViewById(R.id.foodNameEditText);
-        beverageNameEditText = view.findViewById(R.id.beverageNameEditText);
         impressionsEditText = view.findViewById(R.id.impressionsEditText);
         costEditText = view.findViewById(R.id.costEditText);
         dateEditText = view.findViewById(R.id.dateEditText);
@@ -183,19 +182,51 @@ public class RegisterFragment extends Fragment {
         String selectedlocation = locationtypeSpinner.getSelectedItem().toString();
         String selectedType = mealTypespinner.getSelectedItem().toString();
         String foodName = foodNameEditText.getText().toString();
-        String beverageName = beverageNameEditText.getText().toString();
         String impressions = impressionsEditText.getText().toString();
         String time = dateEditText.getText().toString();
-        String cost = costEditText.getText().toString();
+        String costString = costEditText.getText().toString();
+        Integer cost =0;
+        Integer calorie=0;
         byte[] photoBytes = imageToByteArray(foodImage);
+        if (foodName.isEmpty() || impressions.isEmpty() || time.isEmpty() || costString.isEmpty() ) {
+            Toast.makeText(getContext(), "모든 항목을 입력해주세요", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!costString.isEmpty()) {
+            try {
+                cost = Integer.parseInt(costString);
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "비용 란에 숫자만 입력해주세요", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        if("아침".equals(selectedType))
+        {
+            calorie = 400;
+        }
+        else if("점심".equals(selectedType))
+        {
+            calorie = 600;
+        }
+        else if("저녁".equals(selectedType))
+        {
+            calorie = 800;
+        }
+        else if("음료".equals(selectedType))
+        {
+            calorie = 800;
+        }
+        else {
+            calorie = 0;
+        }
 
 
         // 데이터를 저장할 ContentValues 인스턴스 생성
         ContentValues addValues = new ContentValues();
         addValues.put(MyContentProvider.LOCATION, selectedlocation);
         addValues.put(MyContentProvider.TYPE, selectedType);
+        addValues.put(MyContentProvider.CALORIE, calorie);
         addValues.put(MyContentProvider.FOOD_NAME, foodName);
-        addValues.put(MyContentProvider.BEVERAGE_NAME, beverageName);
         addValues.put(MyContentProvider.IMPRESSIONS, impressions);
         addValues.put(MyContentProvider.TIME, time);
         addValues.put(MyContentProvider.COST, cost);
@@ -208,7 +239,6 @@ public class RegisterFragment extends Fragment {
 
             // 성공적인 삽입 후 EditText 필드 지우기 , 사진 기본이미지로 바꾸기
             foodNameEditText.setText("");
-            beverageNameEditText.setText("");
             impressionsEditText.setText("");
             dateEditText.setText("");
             costEditText.setText("");

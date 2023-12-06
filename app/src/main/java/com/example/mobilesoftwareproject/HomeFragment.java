@@ -42,9 +42,9 @@ public class HomeFragment extends Fragment {
     String[] columns = {
             MyContentProvider.LOCATION,
             MyContentProvider.FOOD_NAME,
-            MyContentProvider.BEVERAGE_NAME,
             MyContentProvider.IMPRESSIONS,
             MyContentProvider.COST,
+            MyContentProvider.CALORIE,
             MyContentProvider.PHOTO
     };
 
@@ -52,9 +52,9 @@ public class HomeFragment extends Fragment {
     int[] to = {
             R.id.textViewLocation,
             R.id.textViewFoodName,
-            R.id.textViewBeverageName,
             R.id.textViewImpressions,
             R.id.textViewCost,
+            R.id.textViewCalorie,
             R.id.imageViewFood
     };
 
@@ -164,69 +164,32 @@ public class HomeFragment extends Fragment {
             // Get references to views
             TextView textViewLocation = view.findViewById(R.id.textViewLocation);
             TextView textViewFoodName = view.findViewById(R.id.textViewFoodName);
-            TextView textViewBeverageName = view.findViewById(R.id.textViewBeverageName);
             TextView textViewImpressions = view.findViewById(R.id.textViewImpressions);
             TextView textViewCost = view.findViewById(R.id.textViewCost);
             ImageView imageViewFood = view.findViewById(R.id.imageViewFood);
+            TextView textViewCalorie = view.findViewById(R.id.textViewCalorie);
             String type = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
 
 
             // Extract data from the cursor
             String location = "위치 :" + cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
             String foodName = "음식 이름 : "+ cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
-            String beverageName = "음료 이름 : "+cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.BEVERAGE_NAME));
             String impressions = "감상평 : "+cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.IMPRESSIONS));
-            String cost = "가격 : "+cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
+            int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
+            int calorie = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
             byte[] photoByteArray = cursor.getBlob(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
 
             // Set data to views
             textViewLocation.setText(location);
             textViewFoodName.setText(foodName);
-            textViewBeverageName.setText(beverageName);
+            textViewCost.setText("가격 : " + String.valueOf(cost)+"원");
+            textViewCalorie.setText("칼로리 : " + String.valueOf(calorie) +"Kcal");
             textViewImpressions.setText(impressions);
-            textViewCost.setText(cost);
 
             // Set the photo from byte array
             if (photoByteArray != null) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
                 imageViewFood.setImageBitmap(bitmap);
-            }
-            TextView calorietextView = view.findViewById(R.id.textViewCalorie);
-            if (type != null) {
-                switch (type) {
-                    case "아침":// 아침에 해당하는 칼로리로 설정
-                        if("음료 이름 : water".equals(beverageName))
-                            calorietextView.setText("총 칼로리: 300kcal");
-                        else if("음료 이름 : coffee".equals(beverageName))
-                            calorietextView.setText("총 칼로리: 350kcal");
-                        else
-                            calorietextView.setText("총 칼로리: 400kcal");
-                            break;
-                    case "점심":// 점심에 해당하는 칼로리로 설정
-                        if("음료 이름 : water".equals(beverageName))
-                            calorietextView.setText("총 칼로리: 400kcal");
-                        else if("음료 이름 : coffee".equals(beverageName))
-                            calorietextView.setText("총 칼로리: 450kcal");
-                        else
-                            calorietextView.setText("총 칼로리: 500kcal");
-                        break;
-                    case "저녁":// 저녁에 해당하는 칼로리로 설정
-                        if("음료 이름 : water".equals(beverageName))
-                            calorietextView.setText("총 칼로리: 500kcal");
-                        else if("음료 이름 : coffee".equals(beverageName))
-                            calorietextView.setText("총 칼로리: 550kcal");
-                        else
-                            calorietextView.setText("총 칼로리: 600kcal");
-                        break;
-                    default:// 그 외에는 0kcal로 설정 또는 원하는 기본값으로 설정
-                        if("음료 이름 : water".equals(beverageName))
-                            calorietextView.setText("총 칼로리: 0kcal");
-                        else if("음료 이름 : coffee".equals(beverageName))
-                            calorietextView.setText("총 칼로리: 50kcal");
-                        else
-                            calorietextView.setText("총 칼로리: 100kcal");
-                        break;
-                }
             }
             deleteButton = view.findViewById(R.id.deleteButton);
             deleteButton.setTag(cursor.getLong(cursor.getColumnIndexOrThrow(MyContentProvider.ID))); // Set the ID as the tag for later retrieval
