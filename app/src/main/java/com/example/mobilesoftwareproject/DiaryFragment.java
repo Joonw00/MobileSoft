@@ -122,17 +122,44 @@ public class DiaryFragment extends Fragment {
 
                     if (cursor != null) {
                         List<String> mealDataList = new ArrayList<>();
+                        int totalCalories = 0;
 
                         while (cursor.moveToNext()) {
+                            int calorie = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
                             String mealType = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
                             String foodName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
                             String cost = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
                             String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
 
                             // 데이터를 문자열로 만들어 리스트에 추가
-                            String mealData = mealType + ": " + foodName + " (" + cost + "원) at " + location;
+                            String mealData = String.format("%s \t %s : %s (%s원)",location , mealType, foodName, cost);
+
+                            totalCalories += calorie;
                             mealDataList.add(mealData);
                         }
+                        selectedMealTextView.setText("Today Calories: " + totalCalories + "kcal");
+
+                        Cursor monthlyCursor = getActivity().getContentResolver().query(
+                                MyContentProvider.CONTENT_URI,
+                                null,
+                                MyContentProvider.TIME + " LIKE ?",
+                                new String[]{selectedDate.substring(0, 7) + "%"},
+                                null
+                        );
+
+                        int monthlyTotalCalories = 0;
+
+                        if (monthlyCursor != null) {
+                            while (monthlyCursor.moveToNext()) {
+                                int monthlyCalorie = monthlyCursor.getInt(monthlyCursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
+                                monthlyTotalCalories += monthlyCalorie;
+                            }
+                            monthlyCursor.close();
+                        }
+                        selectedMealTextView.append("\nMonth Total Calories: " + monthlyTotalCalories + "kcal");
+
+                        // 아침, 점심, 저녁 별 칼로리 합계 출력
+                        selectedMealTextView.setVisibility(View.VISIBLE);
 
                         // 정렬을 위해 Comparator를 사용하여 점심, 아침, 저녁 순으로 정렬
                         Collections.sort(mealDataList, new Comparator<String>() {
@@ -203,30 +230,9 @@ public class DiaryFragment extends Fragment {
         if (cursor != null && cursor.moveToFirst()) {
             String foodName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
             String cost = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
-
-            // TODO: 가져온 데이터를 활용하여 UI에 표시
-            // 예시로 토스트 메시지로 출력
-            String displayText = "Food: " + foodName +  "\nCost: " + cost;
-            // 가져온 데이터를 UI에 표시
-            displaySelectedMealAndDate(selectedMeal, selectedDate);
-            displayFoodInformation(foodName, cost);
         } else {
             // 데이터가 없는 경우
             selectedMealTextView.setVisibility(View.GONE);
         }
-    }
-    // 선택된 끼니와 날짜를 표시하는 메서드
-    private void displaySelectedMealAndDate(String selectedMeal, String selectedDate) {
-        selectedMealTextView.setText(selectedMeal);
-        selectedMealTextView.setVisibility(View.VISIBLE);
-    }
-    // 음식 정보를 표시하는 메서드
-    private void displayFoodInformation(String foodName, String cost) {
-        TextView foodInformationTextView = requireView().findViewById(R.id.foodInformationTextView);
-
-        // 가져온 데이터를 UI에 표시
-        String displayText = "Food: " + foodName + "\nCost: " + cost;
-        foodInformationTextView.setText(displayText);
-        foodInformationTextView.setVisibility(View.VISIBLE);
     }
 }
