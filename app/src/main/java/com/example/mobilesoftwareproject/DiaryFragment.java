@@ -48,57 +48,16 @@ public class DiaryFragment extends Fragment {
         diaryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedMeal = mealList[position];
+                // ListView의 아이템을 클릭하면 해당 아이템의 텍스트를 가져와 토스트 메시지로 출력
+                String selectedMeal = (String) parent.getItemAtPosition(position);
+                Toast.makeText(getActivity(), selectedMeal, Toast.LENGTH_SHORT).show();
 
-                // 선택된 날짜의 선택된 끼니에 해당하는 데이터를 표시
-                CalendarView calendarView = requireView().findViewById(R.id.calendarView);
-
-                long selectedDateInMillis = calendarView.getDate();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                String selectedDate = dateFormat.format(new Date(selectedDateInMillis));
-
-                // 데이터베이스에서 정보 가져오기
-                try {
-                    Cursor cursor = getActivity().getContentResolver().query(
-                            MyContentProvider.CONTENT_URI,
-                            null,
-                            MyContentProvider.TIME + " = ?",
-                            new String[]{selectedDate},
-                            null
-                    );
-
-                    if (cursor != null) {
-                        List<String> mealDataList = new ArrayList<>();
-
-                        while (cursor.moveToNext()) {
-                            String mealType = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
-                            String foodName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
-                            String cost = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
-                            String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
-
-                            // 데이터를 문자열로 만들어 리스트에 추가
-                            String mealData = mealType + ": " + foodName + " (" + cost + "원) at " + location;
-                            mealDataList.add(mealData);
-                        }
-
-                        // 정렬을 위해 Comparator를 사용하여 아침, 점심, 저녁 순으로 정렬
-                        Collections.sort(mealDataList, new Comparator<String>() {
-                            @Override
-                            public int compare(String meal1, String meal2) {
-                                // 아침 < 점심 < 저녁 순으로 정렬
-                                return meal1.compareTo(meal2);
-                            }
-                        });
-
-                        // ArrayAdapter를 업데이트하여 데이터를 ListView에 표시
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, mealDataList);
-                        diaryListView.setAdapter(adapter);
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(getActivity(), "데이터가 없습니다.", Toast.LENGTH_SHORT).show();
-                }
+                // 선택된 날짜에 따라 식사를 표시, 관련 작업 수행
+                String selectedDate = calendarView.getDate() + "";
+                retrieveDataFromDatabase(selectedDate, selectedMeal);
             }
         });
+
 
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
@@ -132,7 +91,7 @@ public class DiaryFragment extends Fragment {
                             String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
 
                             // 데이터를 문자열로 만들어 리스트에 추가
-                            String mealData = String.format("%s \t %s : %s (%s원)",location , mealType, foodName, cost);
+                            String mealData = String.format("%s \t %s : %s (%s kcal)",location , mealType, foodName, calorie);
 
                             totalCalories += calorie;
                             mealDataList.add(mealData);
