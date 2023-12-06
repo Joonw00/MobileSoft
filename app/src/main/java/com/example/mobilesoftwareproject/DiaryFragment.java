@@ -175,18 +175,23 @@ public class DiaryFragment extends Fragment {
                             }
 
                             private int getMealOrder(String meal) {
-                                switch (meal) {
-                                    case "아침":
-                                        return 0;
-                                    case "점심":
-                                        return 1;
-                                    case "저녁":
-                                        return 2;
-                                    default:
-                                        return Integer.MAX_VALUE;
+                                // "위치 \t 식사유형 : 음식이름 (가격원)" 형태에서 식사유형 위치를 찾아서 비교
+                                String[] parts = meal.split("\t");
+                                if (parts.length >= 2) {
+                                    String mealType = parts[1].split(":")[0].trim();
+                                    switch (mealType) {
+                                        case "아침":
+                                            return 0;
+                                        case "점심":
+                                            return 1;
+                                        case "저녁":
+                                            return 2;
+                                    }
                                 }
+                                return Integer.MAX_VALUE;
                             }
                         });
+
 
                         // ArrayAdapter를 업데이트하여 데이터를 ListView에 표시
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, mealDataList);
