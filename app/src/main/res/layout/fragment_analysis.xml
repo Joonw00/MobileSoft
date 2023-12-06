@@ -43,4 +43,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp" />
 
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_below="@id/analysisListView"
+        android:layout_marginTop="16dp"/>
 </RelativeLayout>
