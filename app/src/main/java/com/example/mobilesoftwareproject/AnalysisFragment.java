@@ -14,9 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -76,17 +78,62 @@ public class AnalysisFragment extends Fragment {
 
         if (cursor != null) {
             while (cursor.moveToNext()) {
-                int calorie = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
-                totalCalories += calorie;
+                String recordDate = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
 
-                int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
-                totalCost += cost;
+                // 날짜를 지난 달의 날짜와 비교
+                if (isDateInLastMonth(recordDate)) {
+                    int calorie = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
+                    totalCalories += calorie;
+
+                    int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
+                    totalCost += cost;
+                }
             }
             cursor.close();
         }
 
         totalCaloriesTextView.setText("최근 한달간 칼료리 총량 : " + totalCalories + "kcal");
         totalCostTextView.setText("최근 한달간 식사 총 비용 : " + totalCost + "원");
+    }
+    private boolean isDateInLastMonth(String date) {
+        // 날짜 문자열을 Date 객체로 변환
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
+        Date recordDate;
+        try {
+            recordDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // 달력 인스턴스를 가져오고 오늘로 설정
+        Calendar todayCal = Calendar.getInstance();
+
+        // 오늘로부터 30일 이전의 날짜를 가져오기
+        todayCal.add(Calendar.DAY_OF_MONTH, -30);
+        Date thirtyDaysAgoDate = todayCal.getTime();
+
+        // 오늘로부터 30일 이전에 해당하는 모든 날짜를 저장하는 리스트
+        String[] dateArray = new String[30];
+        for (int i = 0; i < 30; i++) {
+            dateArray[i] = dateFormat.format(todayCal.getTime());
+            todayCal.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+
+        // 레코드 날짜가 오늘로부터 30일 이전에 속하는지 확인
+        boolean flag = false;  // flag를 true로 초기화
+        for (String dateStr : dateArray) {
+            Date date1;
+
+            // 레코드 날짜가 오늘로부터 30일 이전에 속하는지 확인
+            if (date.equals(dateStr)) {
+                flag = true;
+                break;
+            }
+        }
+
+        return flag;
     }
 
     private void analyzeMealCostForLastMonth() {
@@ -103,15 +150,20 @@ public class AnalysisFragment extends Fragment {
             Map<String, Integer> mealCostMap = new HashMap<>();
 
             while (cursor.moveToNext()) {
+                String recordDate = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
                 String mealType = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
                 int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
 
-                // 이미 해당 식사 타입에 대한 금액이 맵에 추가되어 있다면 더하기, 없다면 새로 추가
-                if (mealCostMap.containsKey(mealType)) {
-                    mealCostMap.put(mealType, mealCostMap.get(mealType) + cost);
-                } else {
-                    mealCostMap.put(mealType, cost);
+                // 날짜를 지난 달의 날짜와 비교
+                if (isDateInLastMonth(recordDate)) {
+                    // 이미 해당 식사 타입에 대한 금액이 맵에 추가되어 있다면 더하기, 없다면 새로 추가
+                    if (mealCostMap.containsKey(mealType)) {
+                        mealCostMap.put(mealType, mealCostMap.get(mealType) + cost);
+                    } else {
+                        mealCostMap.put(mealType, cost);
+                    }
                 }
+
             }
 
             // LinkedHashMap을 사용하여 정렬된 맵 생성
