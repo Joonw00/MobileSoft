@@ -16,8 +16,10 @@ import androidx.fragment.app.Fragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -112,9 +114,19 @@ public class AnalysisFragment extends Fragment {
                 }
             }
 
+            // LinkedHashMap을 사용하여 정렬된 맵 생성
+            Map<String, Integer> sortedMealCostMap = new LinkedHashMap<>();
+            mealCostMap.entrySet().stream()
+                    .sorted((entry1, entry2) -> {
+                        // 아침, 음료, 저녁, 점심 순으로 정렬
+                        List<String> order = Arrays.asList("아침", "점심", "저녁", "음료");
+                        return Integer.compare(order.indexOf(entry1.getKey()), order.indexOf(entry2.getKey()));
+                    })
+                    .forEachOrdered(entry -> sortedMealCostMap.put(entry.getKey(), entry.getValue()));
+
             // 아래 부분을 추가하여 선택된 날짜에 해당하는 모든 데이터를 가져와서 ListView에 표시
             List<String> analysisDataList = new ArrayList<>();
-            for (Map.Entry<String, Integer> entry : mealCostMap.entrySet()) {
+            for (Map.Entry<String, Integer> entry : sortedMealCostMap.entrySet()) {
                 String analysisData = entry.getKey() + " : " + entry.getValue() + "원";
                 analysisDataList.add(analysisData);
             }
@@ -128,4 +140,5 @@ public class AnalysisFragment extends Fragment {
             Toast.makeText(getActivity(), "No data available for analysis.", Toast.LENGTH_SHORT).show();
         }
     }
+
 }
