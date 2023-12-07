@@ -1,5 +1,6 @@
 package com.example.mobilesoftwareproject;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -18,9 +19,12 @@ import java.util.List;
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
 
     private ArrayList<FoodData> foodDataArrayList;
+    private Context context;
 
-    public RecyclerAdapter(ArrayList<FoodData> foodDataArrayList) {
+
+    public RecyclerAdapter(Context context,ArrayList<FoodData> foodDataArrayList) {
         this.foodDataArrayList = foodDataArrayList;
+        this.context = context;
     }
 
 
@@ -51,12 +55,32 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 삭제 버튼을 클릭했을 때의 동작 구현
-                // 예를 들어, 해당 아이템을 리스트에서 제거하고 RecyclerView 갱신 등을 수행할 수 있습니다.
-                //deleteItem(position);
+
+                deleteItem(position);
             }
         });
 
+    }
+    public void deleteItem(int position) {
+        // 선택된 위치의 아이템을 삭제
+        int id = getid(position);
+        int rowsDeleted = context.getContentResolver().delete(
+                MyContentProvider.CONTENT_URI,
+                MyContentProvider.ID + "=?",
+                new String[]{String.valueOf(id)}
+        );
+
+        // 삭제가 성공적으로 이루어졌을 경우에만 RecyclerView 갱신
+        if (rowsDeleted > 0) {
+            // RecyclerView에서도 아이템 삭제
+            foodDataArrayList.remove(position);
+        }
+        // RecyclerView에 데이터가 변경되었음을 알림
+        notifyItemRemoved(position);
+    }
+    public int getid(int position) {
+        // 특정 위치(position)의 아이템의 ID를 반환
+        return foodDataArrayList.get(position).getID();
     }
 
     @Override

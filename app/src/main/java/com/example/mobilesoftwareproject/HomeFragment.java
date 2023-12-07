@@ -2,6 +2,7 @@ package com.example.mobilesoftwareproject;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,15 +11,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,47 +31,134 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class HomeFragment extends Fragment {
+    public class HomeFragment extends Fragment {
 
-    private RecyclerAdapter recyclerAdapter;
-    private RecyclerView recyclerView;
-    private ArrayList<FoodData> foodDataArrayList;
+        private RecyclerAdapter morningAdapter;
+    private RecyclerAdapter lunchAdapter;
+    private RecyclerAdapter dinnerAdapter;
+    private RecyclerAdapter beverageAdapter;
+    private RecyclerView morningRecyclerView;
+    private RecyclerView lunchRecyclerView;
+    private RecyclerView dinnerRecyclerView;
+    private RecyclerView beverageRecyclerView;
+    private ImageButton morningButton;
+    private ImageButton lunchButton;
+    private ImageButton dinnerButton;
+    private ImageButton beverageButton;
     private ImageButton titleDateButton;
     private ImageButton deleteButton;
     private TextView textViewDate;
     private StringBuilder title;
+        private static final String PREFS_NAME = "MyPrefsFile";
+        private static final String LAST_SELECTED_DATE = "lastSelectedDate";
 
-    // Define the columns to retrieve from the database
-    String[] columns = {
-            MyContentProvider.LOCATION,
-            MyContentProvider.FOOD_NAME,
-            MyContentProvider.IMPRESSIONS,
-            MyContentProvider.COST,
-            MyContentProvider.CALORIE,
-            MyContentProvider.PHOTO
-    };
-
-    // Define the XML views to bind the data to
-    int[] to = {
-            R.id.textViewLocation,
-            R.id.textViewFoodName,
-            R.id.textViewImpressions,
-            R.id.textViewCost,
-            R.id.textViewCalorie,
-            R.id.imageViewFood
-    };
 
     public HomeFragment() {
         // Required empty public constructor
     }
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            // 여기에 리사이클러뷰 업데이트 코드 추가
+            String lastSelectedDate = getLastSelectedDate();
+            String title = lastSelectedDate + "의 식단";
+            textViewDate.setText(title);
+            loadDataFromProvider(lastSelectedDate);
+        }
+        private void saveLastSelectedDate(String date) {
+            SharedPreferences.Editor editor = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
+            editor.putString(LAST_SELECTED_DATE, date);
+            editor.apply();
+        }
+
+        private String getLastSelectedDate() {
+            SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            return prefs.getString(LAST_SELECTED_DATE, getCurrentDate());
+        }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // 레이아웃을 팽창시킴
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Cursor cursor = getActivity().getContentResolver().query(MyContentProvider.CONTENT_URI,
-                null,null,null,null);
+        morningRecyclerView = view.findViewById(R.id.morningRecyclerView);
+        lunchRecyclerView = view.findViewById(R.id.lunchRecyclerView);
+        dinnerRecyclerView = view.findViewById(R.id.dinnerRecyclerView);
+        beverageRecyclerView = view.findViewById(R.id.beverageRecyclerView);
+
+        // onCreateView 내부에서
+        titleDateButton = view.findViewById(R.id.titleDateButton);
+        titleDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialogForData();
+            }
+        });
+        morningButton = view.findViewById(R.id.morningButton);
+        morningButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleRecyclerViewVisibility(morningRecyclerView,morningButton);
+            }
+        });
+        lunchButton = view.findViewById(R.id.lunchButton);
+        lunchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleRecyclerViewVisibility(lunchRecyclerView,lunchButton);
+            }
+        });
+        dinnerButton = view.findViewById(R.id.dinnerButton);
+        dinnerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleRecyclerViewVisibility(dinnerRecyclerView,dinnerButton);
+            }
+        });
+        beverageButton = view.findViewById(R.id.beverageButton);
+        beverageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleRecyclerViewVisibility(beverageRecyclerView,beverageButton);
+            }
+        });
+
+
+
+        // 데이터베이스에서 데이터를 로드
+        // TextView에 오늘의 날짜 표시
+        textViewDate = view.findViewById(R.id.hometitle);
+        String currentDate = getCurrentDate();
+        String title = currentDate + "(오늘)의 식단";
+        textViewDate.setText(title);
+        loadDataFromProvider(currentDate);
+        toggleRecyclerViewVisibility(morningRecyclerView,morningButton);
+        toggleRecyclerViewVisibility(lunchRecyclerView,lunchButton);
+        toggleRecyclerViewVisibility(dinnerRecyclerView,dinnerButton);
+        toggleRecyclerViewVisibility(beverageRecyclerView,beverageButton);
+        return view;
+    }
+    private void toggleRecyclerViewVisibility(RecyclerView recyclerView,ImageButton button) {
+        if (recyclerView.getVisibility() == View.VISIBLE) {
+            // If visible, hide it and set the visibility to GONE
+            recyclerView.setVisibility(View.GONE);
+            recyclerView.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        } else {
+            // If hidden, make it visible and set the visibility to VISIBLE
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+    }
+
+    private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
+        ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();
+        layoutParams.height = height;
+        recyclerView.setLayoutParams(layoutParams);
+    }
+    private ArrayList<FoodData> getData(ArrayList<FoodData> foodData,Cursor cursor)
+    {
         ArrayList<FoodData> foodDataArrayList = new ArrayList<>();
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.ID));
@@ -85,37 +170,11 @@ public class HomeFragment extends Fragment {
             String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
             byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
             String time = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
-            FoodData foodData = new FoodData(id,foodName,impression,cost,location,calorie,photo,mealType,time);
-            foodDataArrayList.add(foodData);
+            FoodData addData = new FoodData(id,foodName,impression,cost,location,calorie,photo,mealType,time);
+            foodDataArrayList.add(addData);
         }
         cursor.close();
-        // 리사이클러뷰 초기화
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-
-        // 어댑터 생성 및 리사이클러뷰에 설정
-        RecyclerAdapter adapter = new RecyclerAdapter(foodDataArrayList);
-        recyclerView.setAdapter(adapter);
-
-        // onCreateView 내부에서
-        titleDateButton = view.findViewById(R.id.titleDateButton);
-        titleDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialogForData();
-            }
-        });
-
-
-        // 데이터베이스에서 데이터를 로드
-        // TextView에 오늘의 날짜 표시
-        textViewDate = view.findViewById(R.id.hometitle);
-        String currentDate = getCurrentDate();
-        String title = currentDate + "(오늘)의 식단";
-        textViewDate.setText(title);
-
-        return view;
+        return foodDataArrayList;
     }
     private String getCurrentDate() {
         // 현재 날짜와 시간을 가져오기
@@ -153,6 +212,7 @@ public class HomeFragment extends Fragment {
                         textViewDate.setText(title);
                         // Load data from the provider for the selected date
                         loadDataFromProvider(selectedDate);
+                        saveLastSelectedDate(selectedDate);
                     }
                 },
                 year, // 초기 년도 - 현재 년도 또는 기본값으로 설정
@@ -165,79 +225,21 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private class CustomCursorAdapter extends SimpleCursorAdapter {
 
-        public CustomCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
-            super(context, layout, c, from, to, flags);
-            try {
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e("CustomCursorAdapter", e.getMessage());
-            }
-        }
-
-        @Override
-        public void bindView(View view, Context context, Cursor cursor)
-        {
-            // Get references to views
-            TextView textViewLocation = view.findViewById(R.id.textViewLocation);
-            TextView textViewFoodName = view.findViewById(R.id.textViewFoodName);
-            TextView textViewImpressions = view.findViewById(R.id.textViewImpressions);
-            TextView textViewCost = view.findViewById(R.id.textViewCost);
-            ImageView imageViewFood = view.findViewById(R.id.imageViewFood);
-            TextView textViewCalorie = view.findViewById(R.id.textViewCalorie);
-            String type = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
-
-
-            // Extract data from the cursor
-            String location = "위치 :" + cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
-            String foodName = "음식 이름 : "+ cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
-            String impressions = "감상평 : "+cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.IMPRESSIONS));
-            int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
-            int calorie = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
-            byte[] photoByteArray = cursor.getBlob(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
-
-            // Set data to views
-            textViewLocation.setText(location);
-            textViewFoodName.setText(foodName);
-            textViewCost.setText("가격 : " + String.valueOf(cost)+"원");
-            textViewCalorie.setText("칼로리 : " + String.valueOf(calorie) +"Kcal");
-            textViewImpressions.setText(impressions);
-
-            // Set the photo from byte array
-            if (photoByteArray != null) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.length);
-                imageViewFood.setImageBitmap(bitmap);
-            }
-            deleteButton = view.findViewById(R.id.deleteButton);
-            deleteButton.setTag(cursor.getLong(cursor.getColumnIndexOrThrow(MyContentProvider.ID))); // Set the ID as the tag for later retrieval
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Get the ID from the tag
-                    long id = (long) v.getTag();
-                    // Call a method to delete the item with the given ID
-                    deleteItem(id);
-                }
-            });
-        }
-    }
 
     // HomeFragment 클래스에
-    private void deleteItem(long id) {
+    private void deleteItem(long id, int position) {
         // ContentResolver를 사용하여 해당 ID에 해당하는 데이터를 삭제
         int rowsDeleted = getActivity().getContentResolver().delete(
                 MyContentProvider.CONTENT_URI,
                 MyContentProvider.ID + "=?",
                 new String[]{String.valueOf(id)}
         );
-        String extractedDate = getTextViewDateText();
 
-        // 삭제가 성공적으로 이루어졌을 경우에만 메시지를 표시
-            // 삭제가 성공적으로 이루어졌을 경우에만 메시지를 표시
-            if (rowsDeleted > 0) {
-                loadDataFromProvider(extractedDate);
-
+        // 삭제가 성공적으로 이루어졌을 경우에만 RecyclerView 갱신
+        if (rowsDeleted > 0) {
+            // RecyclerView에서도 아이템 삭제
+            morningAdapter.deleteItem(position);
         }
     }
     private String getTextViewDateText() {
@@ -257,30 +259,65 @@ public class HomeFragment extends Fragment {
 
     private void loadDataFromProvider(String selectedDate) {
         // Query the database using ContentProvider with the selected date condition
-        Cursor cursor = getActivity().getContentResolver().query(
+        Cursor morningcursor = getActivity().getContentResolver().query(
                 MyContentProvider.CONTENT_URI,
                 null,
-                MyContentProvider.TIME + " LIKE ?",
-                new String[]{selectedDate + "%"},  // Use the selected date as a prefix
+                MyContentProvider.TIME + " LIKE ? AND " + MyContentProvider.TYPE + " = ?",
+                new String[]{selectedDate + "%", "아침"},  // Use the selected date as a prefix and filter by "아침"
                 null
         );
-        ArrayList<FoodData> foodDataArrayList = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.ID));
-            String impression = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.IMPRESSIONS));
-            int calorie = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
-            String mealType = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
-            String foodName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
-            int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
-            String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
-            byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
-            String time = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
-            FoodData foodData = new FoodData(id,foodName,impression,cost,location,calorie,photo,mealType,time);
-            foodDataArrayList.add(foodData);
-        }
-        // Update the data in the RecyclerAdapter
-        recyclerAdapter.setData(foodDataArrayList);
-        recyclerAdapter.notifyDataSetChanged();
+        Cursor lunchcursor = getActivity().getContentResolver().query(
+                MyContentProvider.CONTENT_URI,
+                null,
+                MyContentProvider.TIME + " LIKE ? AND " + MyContentProvider.TYPE + " = ?",
+                new String[]{selectedDate + "%", "점심"},  // Use the selected date as a prefix and filter by "아침"
+                null
+        );
+        Cursor dinnercursor = getActivity().getContentResolver().query(
+                MyContentProvider.CONTENT_URI,
+                null,
+                MyContentProvider.TIME + " LIKE ? AND " + MyContentProvider.TYPE + " = ?",
+                new String[]{selectedDate + "%", "저녁"},  // Use the selected date as a prefix and filter by "아침"
+                null
+        );Cursor beveragecursor = getActivity().getContentResolver().query(
+                MyContentProvider.CONTENT_URI,
+                null,
+                MyContentProvider.TIME + " LIKE ? AND " + MyContentProvider.TYPE + " = ?",
+                new String[]{selectedDate + "%", "음료"},  // Use the selected date as a prefix and filter by "아침"
+                null
+        );
+
+        ArrayList<FoodData> morningArrayList = new ArrayList<>();
+        ArrayList<FoodData> lunchArrayList = new ArrayList<>();
+        ArrayList<FoodData> dinnerArrayList = new ArrayList<>();
+        ArrayList<FoodData> beverageArrayList = new ArrayList<>();
+
+        // Load data into respective lists
+        morningArrayList = getData(morningArrayList, morningcursor);
+        lunchArrayList = getData(lunchArrayList, lunchcursor);
+        dinnerArrayList = getData(dinnerArrayList, dinnercursor);
+        beverageArrayList = getData(beverageArrayList, beveragecursor);
+        // Adapter 생성
+        morningAdapter = new RecyclerAdapter(requireContext(), morningArrayList);
+        lunchAdapter = new RecyclerAdapter(requireContext(), lunchArrayList);
+        dinnerAdapter = new RecyclerAdapter(requireContext(), dinnerArrayList);
+        beverageAdapter = new RecyclerAdapter(requireContext(), beverageArrayList);
+
+        morningRecyclerView.setAdapter(morningAdapter);
+        lunchRecyclerView.setAdapter(lunchAdapter);
+        dinnerRecyclerView.setAdapter(dinnerAdapter);
+        beverageRecyclerView.setAdapter(beverageAdapter);
+
+        morningAdapter.notifyDataSetChanged();
+        lunchAdapter.notifyDataSetChanged();
+        dinnerAdapter.notifyDataSetChanged();
+        beverageAdapter.notifyDataSetChanged();
+
+        morningRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        lunchRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        dinnerRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        beverageRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
     }
 
 
