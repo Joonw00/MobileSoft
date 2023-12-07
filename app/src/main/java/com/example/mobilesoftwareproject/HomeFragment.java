@@ -21,8 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -32,12 +35,14 @@ import java.util.regex.Pattern;
 
 public class HomeFragment extends Fragment {
 
-    private ListView listView;
-    private CursorAdapter cursorAdapter;
+    private RecyclerAdapter recyclerAdapter;
+    private RecyclerView recyclerView;
+    private ArrayList<FoodData> foodDataArrayList;
     private ImageButton titleDateButton;
     private ImageButton deleteButton;
     private TextView textViewDate;
     private StringBuilder title;
+
     // Define the columns to retrieve from the database
     String[] columns = {
             MyContentProvider.LOCATION,
@@ -58,7 +63,6 @@ public class HomeFragment extends Fragment {
             R.id.imageViewFood
     };
 
-
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -68,17 +72,32 @@ public class HomeFragment extends Fragment {
         // 레이아웃을 팽창시킴
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // ListView 및 CursorAdapter 초기화
-        listView = view.findViewById(R.id.listView);
-        cursorAdapter = new CustomCursorAdapter(
-                getActivity(),
-                R.layout.list_item_layout,
-                null,
-                columns,
-                to,
-                0
-        );
-        listView.setAdapter(cursorAdapter);
+        Cursor cursor = getActivity().getContentResolver().query(MyContentProvider.CONTENT_URI,
+                null,null,null,null);
+        ArrayList<FoodData> foodDataArrayList = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.ID));
+            String impression = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.IMPRESSIONS));
+            int calorie = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
+            String mealType = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
+            String foodName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
+            int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
+            String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
+            byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
+            String time = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
+            FoodData foodData = new FoodData(id,foodName,impression,cost,location,calorie,photo,mealType,time);
+            foodDataArrayList.add(foodData);
+        }
+        cursor.close();
+        // 리사이클러뷰 초기화
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+
+        // 어댑터 생성 및 리사이클러뷰에 설정
+        RecyclerAdapter adapter = new RecyclerAdapter(foodDataArrayList);
+        recyclerView.setAdapter(adapter);
+
         // onCreateView 내부에서
         titleDateButton = view.findViewById(R.id.titleDateButton);
         titleDateButton.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +114,6 @@ public class HomeFragment extends Fragment {
         String currentDate = getCurrentDate();
         String title = currentDate + "(오늘)의 식단";
         textViewDate.setText(title);
-        loadDataFromProvider(currentDate);
 
         return view;
     }
@@ -246,10 +264,25 @@ public class HomeFragment extends Fragment {
                 new String[]{selectedDate + "%"},  // Use the selected date as a prefix
                 null
         );
-
-        // Update the Cursor in the CursorAdapter
-        cursorAdapter.swapCursor(cursor);
+        ArrayList<FoodData> foodDataArrayList = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.ID));
+            String impression = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.IMPRESSIONS));
+            int calorie = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.CALORIE));
+            String mealType = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TYPE));
+            String foodName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
+            int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
+            String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
+            byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
+            String time = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
+            FoodData foodData = new FoodData(id,foodName,impression,cost,location,calorie,photo,mealType,time);
+            foodDataArrayList.add(foodData);
+        }
+        // Update the data in the RecyclerAdapter
+        recyclerAdapter.setData(foodDataArrayList);
+        recyclerAdapter.notifyDataSetChanged();
     }
+
 
 }
 
