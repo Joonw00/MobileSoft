@@ -6,4 +6,9 @@
     <item name="impressionsEditText" type="id" />
     <item name="dateEditText" type="id" />
     <item name="costEditText" type="id" />
+    <item name="todayDateTextView" type="id" />
+    <item name="totalCaloriesTextView" type="id" />
+    <item name="totalCostTextView" type="id" />
+    <item name="analysisListView" type="id" />
+    <item name="pieChart" type="id" />
 </resources>

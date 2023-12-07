@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +42,7 @@ public class AnalysisFragment extends Fragment {
     private TextView totalCostTextView;
     private ListView analysisListView;
     private PieChart pieChart;
+    private Button reloadButton;
     Map<String, Integer> mealCostMap = new HashMap<>();
 
     @Nullable
@@ -55,6 +57,15 @@ public class AnalysisFragment extends Fragment {
         showTodayDate();
         showTotalCaloriesAndCostForLastMonth();
         analyzeMealCostForLastMonth();
+
+        reloadButton = view.findViewById(R.id.reloadButton);
+        reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 화면 리로드 버튼 클릭 시 수행할 로직
+                reloadAnalysisData();
+            }
+        });
         return view;
     }
 
@@ -70,6 +81,12 @@ public class AnalysisFragment extends Fragment {
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setTransparentCircleRadius(61f);
+    }
+    private void reloadAnalysisData() {
+        // 데이터 다시 불러오기 및 UI 업데이트 로직
+        showTodayDate();
+        showTotalCaloriesAndCostForLastMonth();
+        analyzeMealCostForLastMonth();
     }
 
     private void showTodayDate() {
