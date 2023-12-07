@@ -151,7 +151,9 @@ public class AnalysisFragment extends Fragment {
                 null
         );
         // PieChart를 위한 데이터 리스트
+
         List<PieEntry> pieEntries = new ArrayList<>();
+        Map<String, Integer> mealCostMap = new HashMap<>();
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 String recordDate = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
@@ -166,19 +168,51 @@ public class AnalysisFragment extends Fragment {
                         mealCostMap.put(mealType, cost);
                     }
                     // PieChart 데이터 설정
-                    pieEntries.add(new PieEntry(cost, mealType));
+//                    addToPieEntryList(pieEntries, cost, mealType);
                 }
             }
-            // PieChart 데이터 설정
-            for (Map.Entry<String, Integer> entry : mealCostMap.entrySet()) {
+            Map<String, Integer> sortedMealCostMap = new LinkedHashMap<>();
+            List<String> order = Arrays.asList("아침", "점심", "저녁", "음료");
+            order.forEach(category -> {
+                if (mealCostMap.containsKey(category)) {
+                    sortedMealCostMap.put(category, mealCostMap.get(category));
+                }
+            });
+
+            // Map에서 합산된 데이터를 PieChart 데이터로 설정
+            for (Map.Entry<String, Integer> entry : sortedMealCostMap.entrySet()) {
                 pieEntries.add(new PieEntry(entry.getValue(), entry.getKey()));
             }
             setupPieChart(pieEntries);
+
+            // 아래 부분을 추가하여 선택된 날짜에 해당하는 모든 데이터를 가져와서 ListView에 표시
+            List<String> analysisDataList = new ArrayList<>();
+            for (Map.Entry<String, Integer> entry : sortedMealCostMap.entrySet()) {
+                String analysisData = entry.getKey() + " : " + entry.getValue() + "원";
+                analysisDataList.add(analysisData);
+            }
+
+            // ArrayAdapter를 업데이트하여 데이터를 ListView에 표시
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, analysisDataList);
+            analysisListView.setAdapter(adapter);
             cursor.close();
         } else {
             Toast.makeText(getActivity(), "No data available for analysis.", Toast.LENGTH_SHORT).show();
         }
     }
+    private void addToPieEntryList(List<PieEntry> pieEntries, int cost, String mealType) {
+        // 이미 해당 식사 타입이 리스트에 추가되어 있다면 금액을 더하기, 없다면 새로 추가
+        for (PieEntry entry : pieEntries) {
+            if (entry.getLabel().equals(mealType)) {
+                entry.setY(entry.getY() + cost);
+                return;
+            }
+        }
+
+        // 해당 식사 타입이 리스트에 없으면 새로 추가
+        pieEntries.add(new PieEntry(cost, mealType));
+    }
+
 
     // PieChart 초기화 및 설정을 위한 메서드
     private void setupPieChart(List<PieEntry> pieEntries) {
