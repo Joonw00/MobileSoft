@@ -57,14 +57,16 @@ import java.util.regex.Pattern;
         // Required empty public constructor
     }
         @Override
-        public void onResume() {
-            super.onResume();
+        public void onHiddenChanged(boolean hidden) {
+            super.onHiddenChanged(hidden);
 
-            // 여기에 리사이클러뷰 업데이트 코드 추가
-            String lastSelectedDate = getLastSelectedDate();
-            String title = lastSelectedDate + "의 식단";
-            textViewDate.setText(title);
-            loadDataFromProvider(lastSelectedDate);
+            if (!hidden) { // 프래그먼트가 다시 나타날 때
+                // 여기에 리사이클러뷰 업데이트 코드 추가
+                String lastSelectedDate = getLastSelectedDate();
+                String title = lastSelectedDate + "의 식단";
+                textViewDate.setText(title);
+                loadDataFromProvider(lastSelectedDate);
+            }
         }
         private void saveLastSelectedDate(String date) {
             SharedPreferences.Editor editor = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit();
@@ -152,11 +154,6 @@ import java.util.regex.Pattern;
         }
     }
 
-    private void setRecyclerViewHeight(RecyclerView recyclerView, int height) {
-        ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();
-        layoutParams.height = height;
-        recyclerView.setLayoutParams(layoutParams);
-    }
     private ArrayList<FoodData> getData(ArrayList<FoodData> foodData,Cursor cursor)
     {
         ArrayList<FoodData> foodDataArrayList = new ArrayList<>();
@@ -168,7 +165,7 @@ import java.util.regex.Pattern;
             String foodName = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.FOOD_NAME));
             int cost = cursor.getInt(cursor.getColumnIndexOrThrow(MyContentProvider.COST));
             String location = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.LOCATION));
-            byte[] photo = cursor.getBlob(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
+            String photo = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.PHOTO));
             String time = cursor.getString(cursor.getColumnIndexOrThrow(MyContentProvider.TIME));
             FoodData addData = new FoodData(id,foodName,impression,cost,location,calorie,photo,mealType,time);
             foodDataArrayList.add(addData);

@@ -7,12 +7,12 @@ public class FoodData {
     int Cost;
     String Location;
     int Calorie;
-    byte[] Photo;
+    String Photo;
     String Type;
     String Time;
 
 
-    public FoodData(int ID,String foodName,String Impression,int Cost,String Location,int Calorie,byte[] Photo,String Type,String Time) {
+    public FoodData(int ID,String foodName,String Impression,int Cost,String Location,int Calorie,String Photo,String Type,String Time) {
         this.ID = ID;
         this.foodName = foodName;
         this.Impression = Impression;
@@ -36,7 +36,7 @@ public class FoodData {
         return Location;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return Photo;
     }
 

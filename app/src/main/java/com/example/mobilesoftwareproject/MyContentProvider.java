@@ -28,7 +28,7 @@ public class MyContentProvider extends ContentProvider {
     // 데이터베이스와 관련된 상수 정의
     private static final String DATABASE_NAME = "mydatabase";
     private static final String DATABASE_TABLE = "mytable";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     // 데이터베이스 테이블의 열 이름 정의
     public static final String LOCATION = "location";
@@ -52,7 +52,7 @@ public class MyContentProvider extends ContentProvider {
                     IMPRESSIONS + " TEXT, " +
                     TIME + " TEXT, " +
                     COST + " INT," +
-                    PHOTO + " BLOB);";
+                    PHOTO + " TEXT);";
 
     // UriMatcher를 사용하여 URI를 기반으로 ContentProvider에 대한 작업 식별
     private static final UriMatcher sUriMatcher;

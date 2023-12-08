@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -37,9 +39,14 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class RegisterFragment extends Fragment {
     private static final int GALLERY_REQUEST_CODE = 1;
@@ -187,7 +194,9 @@ public class RegisterFragment extends Fragment {
         String costString = costEditText.getText().toString();
         Integer cost =0;
         Integer calorie=0;
-        byte[] photoBytes = imageToByteArray(foodImage);
+        String photoBytes = saveImageToFile(((BitmapDrawable) foodImage.getDrawable()).getBitmap());
+
+
         if (foodName.isEmpty() || impressions.isEmpty() || time.isEmpty() || costString.isEmpty() ) {
             Toast.makeText(getContext(), "모든 항목을 입력해주세요", Toast.LENGTH_SHORT).show();
             return;
@@ -235,7 +244,7 @@ public class RegisterFragment extends Fragment {
         try {
             // ContentProvider에 데이터 삽입
             getActivity().getContentResolver().insert(MyContentProvider.CONTENT_URI, addValues);
-            Toast.makeText(getActivity().getBaseContext(), "식사 기록 추가됨", Toast.LENGTH_LONG).show();
+             Toast.makeText(getActivity().getBaseContext(), "식사 기록 추가됨", Toast.LENGTH_LONG).show();
 
             // 성공적인 삽입 후 EditText 필드 지우기 , 사진 기본이미지로 바꾸기
             foodNameEditText.setText("");
@@ -276,10 +285,63 @@ public class RegisterFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) { //사진찍기 버튼 클릭
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
-            // 이미지뷰에 이미지 표시
-            foodImage.setImageBitmap(photo);
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            uri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), uri);
+                foodImage.setImageBitmap(bitmap);
+
+                // 이미지 파일로 저장
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null)
+        {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            foodImage.setImageBitmap(bitmap);
         }
     }
+    private String saveImageToFile(Bitmap bitmap) {
+        // 이미지 파일로 저장
+        if (bitmap == null) {
+            return ""; // 빈 문자열 반환 또는 다른 기본값으로 변경할 수 있음
+        }
+
+        ContextWrapper cw = new ContextWrapper(requireActivity().getApplicationContext());
+
+        // 현재 시간을 파일 이름에 추가하여 고유한 이름 생성
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String fileName = "food_image_" + timeStamp + ".jpg";
+
+        File directory = cw.getDir("images", Context.MODE_PRIVATE);
+        File file = new File(directory, fileName);
+
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return ""; // 빈 문자열 반환 또는 다른 기본값으로 변경할 수 있음
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ""; // 빈 문자열 반환 또는 다른 기본값으로 변경할 수 있음
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 파일 경로 반환
+        return file.getAbsolutePath();
+    }
+
+
 }

@@ -48,11 +48,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.textViewCost.setText("가격 :"+currentFoodData.getCost());
         holder.textViewLocation.setText("위치 :"+currentFoodData.getLocation());
         holder.textViewCalorie.setText("칼로리 : "+currentFoodData.getCalorie());
-
-        byte[] imageByteArray = currentFoodData.getPhoto();
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
-
+        String imagePath = currentFoodData.getPhoto();
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
         holder.imageViewFood.setImageBitmap(bitmap);
+
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
