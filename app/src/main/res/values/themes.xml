@@ -3,6 +3,9 @@
     <style name="Base.Theme.MobileSoftwareProject" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/cuteOrange</item>
+        <item name="colorPrimaryDark">@color/cuteOrange</item>
+        <item name="colorAccent">@color/cuteOrange</item>
     </style>
 
     <style name="Theme.MobileSoftwareProject" parent="Base.Theme.MobileSoftwareProject" />

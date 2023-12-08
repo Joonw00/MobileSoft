@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -74,6 +75,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         if (rowsDeleted > 0) {
             // RecyclerView에서도 아이템 삭제
             foodDataArrayList.remove(position);
+            Toast.makeText(context, "식사 기록 삭제 성공", Toast.LENGTH_LONG).show();
         }
         // RecyclerView에 데이터가 변경되었음을 알림
         notifyItemRemoved(position);
