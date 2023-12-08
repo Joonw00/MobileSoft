@@ -45,42 +45,7 @@ public class DiaryFragment extends Fragment{
         // ListView에 어댑터 설정
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, mealList);
         diaryListView.setAdapter(adapter); // ListView에 어댑터 설정
-        diaryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedMeal = (String) parent.getItemAtPosition(position);
 
-                // Get the selected date from the CalendarView in the desired format
-                long selectedDateMillis = calendarView.getDate();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                String selectedDate = sdf.format(new Date(selectedDateMillis));
-
-                // Retrieve data from the ListView item's text (assuming the format is "(XXXkcal)")
-                String itemText = (String) parent.getItemAtPosition(position);
-
-                // Find the position of the opening parenthesis
-                int indexOfOpeningParenthesis = itemText.indexOf('(');
-
-                if (indexOfOpeningParenthesis != -1) {
-                    // Extract the substring from the opening parenthesis onward
-                    String trimmedText = itemText.substring(indexOfOpeningParenthesis);
-
-                    // Extract the calorie value using the regular expression
-                    String calorieString = trimmedText.replaceAll("[^0-9]", ""); // Remove all non-numeric characters
-
-                    if (!calorieString.isEmpty()) {
-                        int calorie = Integer.parseInt(calorieString);
-                        toastCalories += calorie;
-
-                        Toast.makeText(getActivity(), "Total Calories : " + toastCalories + "kcal", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "Error parsing calorie data", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(getActivity(), "Opening parenthesis not found", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
 
 
