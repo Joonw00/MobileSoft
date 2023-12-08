@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/smallImageView"
+        android:layout_width="110dp"
+        android:layout_height="60dp"
+        android:src="@drawable/dg_font_logo"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"/>
+
     <Button
         android:id="@+id/reloadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reload"
         android:layout_below="@id/pieChart"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true"/>
+        android:background="@drawable/rounded_button_background"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="새로 고침"
+        android:textColor="@android:color/white"
+        tools:ignore="ExtraText" />
+
     <TextView
         android:id="@+id/todayDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:textColor="@android:color/black" />
+        android:layout_marginTop="30dp"
+        android:textColor="@color/cuteOrange" />
 
     <TextView
         android:id="@+id/totalCaloriesTextView"
@@ -30,25 +45,26 @@
         android:layout_marginTop="16dp"
         android:textColor="@android:color/black" />
 
-    <TextView
-        android:id="@+id/totalCostTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total Cost for Last Month: "
-        android:textSize="18sp"
-        android:layout_below="@id/totalCaloriesTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:textColor="@android:color/black" />
-
     <ListView
         android:id="@+id/analysisListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/totalCostTextView"
+        android:layout_below="@id/totalCaloriesTextView"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:background="@android:color/darker_gray"
+        android:layout_below="@id/analysisListView"
+        android:layout_marginTop="16dp"/>
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0.2dp"-->
+<!--        android:background="@android:color/darker_gray"-->
+<!--        android:layout_below="@id/todayDateTextView"-->
+<!--        android:layout_marginTop="16dp"/>-->
 
 
     <com.github.mikephil.charting.charts.PieChart

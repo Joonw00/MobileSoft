@@ -30,6 +30,8 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.vectordrawable:vectordrawable:1.1.0")
+    implementation ("androidx.vectordrawable:vectordrawable-animated:1.1.0")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")

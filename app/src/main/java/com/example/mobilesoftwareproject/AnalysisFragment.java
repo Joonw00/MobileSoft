@@ -121,8 +121,8 @@ public class AnalysisFragment extends Fragment {
             }
             cursor.close();
         }
-        totalCaloriesTextView.setText("최근 한달간 칼료리 총량 : " + totalCalories + "kcal");
-        totalCostTextView.setText("최근 한달간 식사 총 비용 : " + totalCost + "원");
+        totalCaloriesTextView.setText("한달간 총 칼로리 : " + totalCalories + "kcal");
+//        totalCostTextView.setText("최근 한달간 식사 총 비용 : " + totalCost + "원");
     }
 
     private boolean isDateInLastMonth(String date) {
