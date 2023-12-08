@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,10 +27,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class DiaryFragment extends Fragment {
+public class DiaryFragment extends Fragment implements View.OnClickListener {
 
     private String[] mealList = {};
     private TextView selectedMealTextView; // 멤버 변수로 선언
+    private int toastCalories = 0;
 
     @Nullable
     @Override
@@ -43,20 +45,43 @@ public class DiaryFragment extends Fragment {
         // ListView에 어댑터 설정
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, mealList);
         diaryListView.setAdapter(adapter); // ListView에 어댑터 설정
-
-
         diaryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // ListView의 아이템을 클릭하면 해당 아이템의 텍스트를 가져와 토스트 메시지로 출력
                 String selectedMeal = (String) parent.getItemAtPosition(position);
-                Toast.makeText(getActivity(), selectedMeal, Toast.LENGTH_SHORT).show();
 
-                // 선택된 날짜에 따라 식사를 표시, 관련 작업 수행
-                String selectedDate = calendarView.getDate() + "";
-                retrieveDataFromDatabase(selectedDate, selectedMeal);
+                // Get the selected date from the CalendarView in the desired format
+                long selectedDateMillis = calendarView.getDate();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                String selectedDate = sdf.format(new Date(selectedDateMillis));
+
+                // Retrieve data from the ListView item's text (assuming the format is "(XXXkcal)")
+                String itemText = (String) parent.getItemAtPosition(position);
+
+                // Find the position of the opening parenthesis
+                int indexOfOpeningParenthesis = itemText.indexOf('(');
+
+                if (indexOfOpeningParenthesis != -1) {
+                    // Extract the substring from the opening parenthesis onward
+                    String trimmedText = itemText.substring(indexOfOpeningParenthesis);
+
+                    // Extract the calorie value using the regular expression
+                    String calorieString = trimmedText.replaceAll("[^0-9]", ""); // Remove all non-numeric characters
+
+                    if (!calorieString.isEmpty()) {
+                        int calorie = Integer.parseInt(calorieString);
+                        toastCalories += calorie;
+
+                        Toast.makeText(getActivity(), "Total Calories : " + toastCalories + "kcal", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Error parsing calorie data", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getActivity(), "Opening parenthesis not found", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
 
 
 
@@ -162,8 +187,29 @@ public class DiaryFragment extends Fragment {
             }
         });
 
+        Button resetButton = view.findViewById(R.id.resetButton);
+        resetButton.setOnClickListener(this); // Set the fragment as the click listener
 
         return view;
+    }
+    private void resetCalories() {
+        toastCalories = 0;
+
+        // Assuming you have a reference to your ListView
+        ListView diaryListView = getView().findViewById(R.id.diaryListView);
+
+        // Assuming you have a reference to your ArrayAdapter
+        ArrayAdapter<String> adapter = (ArrayAdapter<String>) diaryListView.getAdapter();
+
+        // Clear the data in the adapter and notify the ListView
+        adapter.clear();
+        adapter.notifyDataSetChanged();
+
+        // Hide the TextView displaying meal information
+        selectedMealTextView.setVisibility(View.GONE);
+
+        // Show a toast message indicating that calories have been reset
+        Toast.makeText(getActivity(), "Calories Reset", Toast.LENGTH_SHORT).show();
     }
 
     // 데이터베이스에서 정보를 가져와 처리하는 메서드
@@ -197,6 +243,14 @@ public class DiaryFragment extends Fragment {
         } else {
             // 데이터가 없는 경우
             selectedMealTextView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.resetButton) {
+            // Handle Reset Calories button click
+            resetCalories();
         }
     }
 }

@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_above="@+id/resetButton"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp" />
 
@@ -34,5 +35,11 @@
         android:text=""
         android:padding="16dp"
         android:visibility="gone" />
-
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="300dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="50dp"
+        android:text="칼로리 초기화"
+        android:onClick="resetCalories"/>
 </LinearLayout>
