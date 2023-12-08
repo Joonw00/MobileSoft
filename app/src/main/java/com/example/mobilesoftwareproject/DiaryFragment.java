@@ -27,7 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class DiaryFragment extends Fragment implements View.OnClickListener {
+public class DiaryFragment extends Fragment{
 
     private String[] mealList = {};
     private TextView selectedMealTextView; // 멤버 변수로 선언
@@ -187,9 +187,6 @@ public class DiaryFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        Button resetButton = view.findViewById(R.id.resetButton);
-        resetButton.setOnClickListener(this); // Set the fragment as the click listener
-
         return view;
     }
     private void resetCalories() {
@@ -246,11 +243,4 @@ public class DiaryFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.resetButton) {
-            // Handle Reset Calories button click
-            resetCalories();
-        }
-    }
 }

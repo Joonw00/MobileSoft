@@ -35,11 +35,4 @@
         android:text=""
         android:padding="16dp"
         android:visibility="gone" />
-    <Button
-        android:id="@+id/resetButton"
-        android:layout_width="300dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="50dp"
-        android:text="칼로리 초기화"
-        android:onClick="resetCalories"/>
 </LinearLayout>
