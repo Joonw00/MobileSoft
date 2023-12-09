@@ -63,7 +63,15 @@ import java.util.regex.Pattern;
             if (!hidden) { // 프래그먼트가 다시 나타날 때
                 // 여기에 리사이클러뷰 업데이트 코드 추가
                 String lastSelectedDate = getLastSelectedDate();
-                String title = lastSelectedDate + "의 식단";
+                String today = getCurrentDate();
+                String title;
+                if(lastSelectedDate.equals(today)) {
+                    title = lastSelectedDate + "(오늘)의 식단";
+                }
+                else
+                {
+                    title = lastSelectedDate + "의 식단";
+                }
                 textViewDate.setText(title);
                 loadDataFromProvider(lastSelectedDate);
             }
