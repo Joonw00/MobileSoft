@@ -45,9 +45,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         // 뷰홀더의 각 뷰에 데이터 설정
         holder.textViewFoodName.setText("음식 이름 :" + currentFoodData.getFoodName());
         holder.textViewImpressions.setText("소감 :" + currentFoodData.getImpression());
-        holder.textViewCost.setText("가격 :"+currentFoodData.getCost());
+        holder.textViewCost.setText("가격 :"+currentFoodData.getCost()+"원");
         holder.textViewLocation.setText("위치 :"+currentFoodData.getLocation());
-        holder.textViewCalorie.setText("칼로리 : "+currentFoodData.getCalorie());
+        holder.textViewCalorie.setText("칼로리 : "+currentFoodData.getCalorie() +"Kcal");
         String imagePath = currentFoodData.getPhoto();
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
         holder.imageViewFood.setImageBitmap(bitmap);
