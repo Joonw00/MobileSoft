@@ -223,7 +223,7 @@ public class RegisterFragment extends Fragment {
         }
         else if("음료".equals(selectedType))
         {
-            calorie = 800;
+            calorie = 100;
         }
         else {
             calorie = 0;
